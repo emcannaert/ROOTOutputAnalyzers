@@ -1,0 +1,466 @@
+#include <iostream>
+#include <string>
+#include "TLorentzVector.h"
+
+using namespace std;
+
+void doThings(std::string inFileName, std::string outFileName)
+{
+   int eventnum = 0;int nhadevents = 0;int nfatjets = 0;int raw_nfatjets;int tot_nAK4_50,tot_nAK4_70;int SJ_nAK4_50[100],SJ_nAK4_70[100];
+   double jet_pt[100], jet_eta[100], jet_mass[100], jet_dr[100], raw_jet_mass[100],raw_jet_pt[100],raw_jet_phi[100];
+   double jet_beta[100], beta_T[100], AK4_mass_20[100],AK4_mass_30[100],AK4_mass_50[100],AK4_mass_70[100],AK4_mass_100[100],SJ_mass_150[100],SJ_mass_600[100],SJ_mass_800[100],SJ_mass_1000[100];
+   double SJ_mass_50[100], SJ_mass_70[100],superJet_mass[100],SJ_AK4_50_mass[100],SJ_AK4_70_mass[100],genSuperJetMass[100];double tot_jet_mass,decay_inv_mass, chi_inv_mass;
+   int nSuperJets,correctlySortedChi1,correctlySortedChi2;
+   int jet_ndaughters[100], jet_nAK4[100],jet_nAK4_20[100],jet_nAK4_30[100],jet_nAK4_50[100],jet_nAK4_70[100],SJ_nAK4_150[100],jet_nAK4_150[100],SJ_nAK4_200[100],SJ_nAK4_400[100],SJ_nAK4_600[100],SJ_nAK4_800[100],SJ_nAK4_1000[100];
+   int ntotalevents = 0;
+   int nAK4;
+   double AK4_mass[100];
+   double SJ_mass_100[100],AK4_E[500];
+   int SJ_nAK4_100[100];
+   double totHT = 0;
+   int nbtaggedAK4 =0;
+   int SJ_nAK4_300[100];
+   int nfatjet_pre;
+   double SJ_mass_300[100];
+   double posSJP, negSJP;
+   double AK4_bdisc[100],AK4_DeepJet_disc[100];
+   double AK4_pt[100];
+   double totMET;
+   double diSuperJet_mass, diSuperJet_mass_100;
+   double SJ_E[2],SJ_Px[2],SJ_Py[2],SJ_Pz[2];
+   double dijetMassOne, dijetMassTwo;
+   //have to multiply these by scale factors  
+   double resonance_mass_comb;
+   double daughter_mass_comb[100];
+   int nGenBJets_AK4[100], AK4_partonFlavour[100],AK4_HadronFlavour[100];
+   int SJ1_decision, SJ2_decision;
+
+   //TFile *f = new TFile("/home/ethan/QCD_HT1000to1500_combined.root");
+   //TFile *f = new TFile("/home/ethan/QCD_HT1500to2000_combined.root");
+   //TFile *f = new TFile("/home/ethan/QCD_HT2000toInf_combined.root");
+   //TFile *f = new TFile("/home/ethan/WJetsToLNu_combined.root");
+   //TFile *f = new TFile("/home/ethan/WJet_QQ_combined.root");
+   //TFile *f = new TFile("/home/ethan/TTToHadronic_combined.root");
+   //TFile *f = new TFile("/home/ethan/TTTo2l2nu_combine.root");
+   //TFile *f = new TFile("/home/ethan/TTtoSemiLeptonic_combined.root");
+
+   const char *_inFilename = inFileName.c_str();
+   const char *_outFilename = outFileName.c_str();
+   std::cout << "Reading file: " << _inFilename << std::endl;
+   TFile *f = new TFile(_inFilename);
+   TFile outFile(_outFilename,"RECREATE");
+
+   TH2F *h_Mjet_vs_pTjet = new TH2F("h_Mjet_vs_pTjet","Jet Mass vs Jet pT; jet p_{T} [GeV];jet mass", 80,0, 4000, 50, 0, 2000);
+   
+   TH1F* h_numAntiTagged = new TH1F("h_numAntiTagged","number of anti-tagged events per (near side) mass ;Mass [GeV]; Events / 100 GeV",40,0.,4000);
+   TH1F* h_numMistagged  = new TH1F("h_numMistagged","number of mistagged second superjets per (near side) mass bin ;Mass [GeV]; Events / 100 GeV",40,0.,4000);
+   TH1F* h_totHT  = new TH1F("h_totHT","Total Event HT;H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+   TH1F* h_lead_SJ_mass  = new TH1F("h_lead_SJ_mass","SuperJet Mass;Mass [GeV]; Events / 100 GeV",40,0.,4000);
+   TH1F* h_lead_SJ_mass_100  = new TH1F("h_lead_SJ_mass_100","SuperJet Mass (E_{AK4} > 100 GeV);Mass [GeV]; Events / 100 GeV",40,0.,4000);
+   TH1F* h_disuperjet_mass  = new TH1F("h_disuperjet_mass","diSuperJet Mass;Mass [GeV]; Events / 400 GeV",25,0.,10000);
+   TH1F* h_disuperjet_mass_100  = new TH1F("h_disuperjet_mass_100","diSuperJet Mass (E_{AK4} > 100 GeV);Mass [GeV]; Events / 200 GeV",50,0.,10000);
+
+   TH1I* h_SJ_nAK4_100  = new TH1I("h_SJ_nAK4_100","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ ;nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
+   TH1I* h_SJ_nAK4_200  = new TH1I("h_SJ_nAK4_200","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ ;nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
+   TH1I* h_SJ_nAK4_300  = new TH1I("h_SJ_nAK4_300","Number of Reclustered AK4 Jets (E_{COM} > 300 GeV) per SJ ;nAK4 Jets (E_{COM} > 300 GeV); Events",10,-0.5,9.5);
+   TH1I* h_SJ_nAK4_400  = new TH1I("h_SJ_nAK4_400","Number of Reclustered AK4 Jets (E_{COM} > 400 GeV) per SJ ;nAK4 Jets (E_{COM} > 400 GeV); Events",10,-0.5,9.5);
+   TH1I* h_nfatjets_pre  = new TH1I("h_nfatjets_pre","Number of AK8 Jets (p_{T} > 500 GeV, M_{PUPPI} > 45 GeV) per Event ;nAK8 Jets; Events",10,-0.5,9.5);
+   TH1F* h_avg_dijet_mass  = new TH1F("h_avg_dijet_mass","Average dijet mass (AK4 jets);Mass [GeV]; Events / 100 GeV",50,0.,5000);
+
+   TH1F* h_diSJ_SJ_mass_ratio  = new TH1F("h_diSJ_SJ_mass_ratio","M_{diSJ} / (M_{SJ1} + M_{SJ2})",50,0.,10);
+   TH2F *h_MSJ_mass_vs_MdSJ = new TH2F("h_MSJ_mass_vs_MdSJ","Tagged Superjet mass vs diSuperjet mass; diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+   TH2F *h_MSJ_mass_vs_MdSJ_doubleTag = new TH2F("h_MSJ_mass_vs_MdSJ_doubleTag","Avg (double) tagged Superjet mass vs diSuperjet mass; diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+
+
+   TH2F *h_MSJ_mass_vs_MdSJ_all = new TH2F("h_MSJ_mass_vs_MdSJ_all","Tagged Superjet mass vs diSuperjet mass - NO PRESELECTION; diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+
+
+   TH1F* h_MSJ1_MSJ2_ratio  = new TH1F("h_MSJ1_MSJ2_ratio","(M_{SJ_{1}} - M_{SJ_{2}})/(M_{SJ_{1}} + M_{SJ_{2}});",30,-3.,3.0);
+   TH1F* h_MdiSJ_SJ12_ratios  = new TH1F("h_MdiSJ_SJ12_ratios","M_{diSJ} / (M_{SJ_{1}} + M_{SJ_{2}})",25,0.,5.0);
+
+   // control region stuff 
+   TH1I* h_SJ_nAK4_100_CR  = new TH1I("h_SJ_nAK4_100_CR","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
+   TH1I* h_SJ_nAK4_200_CR  = new TH1I("h_SJ_nAK4_200_CR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
+   TH1F* h_SJ_mass_CR  = new TH1F("h_SJ_mass_CR","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 200 GeV",20,0.,4000);
+   TH1F* h_disuperjet_mass_CR  = new TH1F("h_disuperjet_mass_CR","diSuperJet Mass (Control Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
+   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+
+
+
+   // double-tag stuff
+   TH1I* h_SJ_nAK4_100_DT  = new TH1I("h_SJ_nAK4_100_DT","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
+   TH1I* h_SJ_nAK4_200_DT = new TH1I("h_SJ_nAK4_200_DT","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
+   TH1F* h_SJ_mass_DT  = new TH1F("h_SJ_mass_DT","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 200 GeV",20,0.,4000);
+   TH1F* h_disuperjet_mass_DT  = new TH1F("h_disuperjet_mass_DT","diSuperJet Mass (Control Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
+   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F("h_MSJ_mass_vs_MdSJ_DT","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+
+   TH1I* h_nLooseBTags = new TH1I("h_nLooseBTags","Number of Loosely b-tagged AK4 Jets; Events",10,-0.5,9.5);
+   TH1I* h_nMidBTags = new TH1I("h_nMidBTags","Number of Mediumly b-tagged AK4 Jets; Events",10,-0.5,9.5);
+   TH1I* h_nTightBTags = new TH1I("h_nTightBTags","Number of Tightly b-tagged AK4 Jets; Events",10,-0.5,9.5);
+
+
+
+   /////////////more for verifying the CR //////////////////////////////////////
+   TH1F* h_AK8_jet_mass_DT  = new TH1F("h_AK8_jet_mass_DT","AK8 Jet Mass (DT region);Mass [GeV]; Events / 30 5GeV",50,0.,1500);
+   TH1F* h_AK8_jet_mass_CR  = new TH1F("h_AK8_jet_mass_CR","AK8 Jet Mass (CR);Mass [GeV]; Events / 30 GeV",50,0.,1500);
+
+   TH1F* h_AK4_jet_mass_DT  = new TH1F("h_AK4_jet_mass_DT","AK4 Jet Mass (DT region);Mass [GeV]; Events / 25 GeV",40,0.,1000);
+   TH1F* h_AK4_jet_mass_CR  = new TH1F("h_AK4_jet_mass_CR","AK4 Jet Mass (CR);Mass [GeV]; Events / 25 GeV",40,0.,1000);
+
+   TH1F* h_totHT_DT  = new TH1F("h_totHT_DT","Event H_{T} (DT region);H_{T} [GeV]; Events / 200 5GeV",50,0.,10000);
+   TH1F* h_totHT_CR  = new TH1F("h_totHT_CR","Event H_{T} (CR);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+
+   TH1I* h_nfatjets_DT = new TH1I("h_nfatjets_DT","Number of AK8 Jets (E_{T} > 300 GeV per Event ;nAK8 Jets; Events",10,-0.5,9.5);
+   TH1I* h_nfatjets_CR = new TH1I("h_nfatjets_CR","Number of AK8 Jets (E_{T} > 300 GeV per Event ;nAK8 Jets; Events",10,-0.5,9.5);
+
+   TH1I* h_nAK4_DT = new TH1I("h_nAK4_DT","Number of AK4 Jets (E_{T} > 30 GeV per Event ;nAK8 Jets; Events",30,-0.5,29.5);
+   TH1I* h_nAK4_CR = new TH1I("h_nAK4_CR","Number of AK4 Jets (E_{T} > 30 GeV per Event ;nAK8 Jets; Events",30,-0.5,29.5);
+
+   TH1F* h_totHT_All  = new TH1F("h_totHT_All","Event H_{T} (All Events from EDAnalyzer);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+   TH1F* h_totHT_All1  = new TH1F("h_totHT_All1","Event H_{T} (All Events from EDAnalyzer 1);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+   TH1F* h_totHT_All2  = new TH1F("h_totHT_All2","Event H_{T} (All Events from EDAnalyzer 2 );H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+   TH1F* h_totHT_All3  = new TH1F("h_totHT_All3","Event H_{T} (All Events from EDAnalyzer 3);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
+
+   TH1F* h_AK4_DeepJet_disc  = new TH1F("h_AK4_DeepJet_disc","AK4 DeepFlavour bdisc scores;bdisc",25,0.,1.25);
+   TH1F* h_AK4_DeepJet_disc_all  = new TH1F("h_AK4_DeepJet_disc_all","AK4 DeepFlavour bdisc scores;bdisc",25,0.,1.25);
+
+   TH1I* h_nAK4 = new TH1I("h_nAK4","Number of AK4 jets;# AK4 jets; Events",20,-0.5,19.5);
+
+   int nAntiTaggedAntiTagged = 0;
+   int nAntiTaggedTagged     = 0;
+   int nTaggedAntiTagged     = 0;
+   int nTaggedTagged         = 0;
+
+   int failedHT = 0;
+   int failedbTag = 0;
+   int failedRatio = 0;
+   int failednAK8 = 0;
+   TCanvas *c1 = new TCanvas("c1","",400,20, 2000,2000);
+   // run this file four times, once for each of the different 2018 dataset pieces
+
+   TTree *t1 = (TTree*)f->Get("clusteringAnalyzerData/tree");   //need to change this to something relevenet
+   const Int_t nentries = t1->GetEntries();
+
+   //std::cout << t1->GetListOfBranches()->FindObject("AK4_partonFlavour") << std::endl;
+   //t1->GetListOfBranches()->Print(); 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+   t1->SetBranchAddress("nfatjets", &nfatjets);   
+   t1->SetBranchAddress("nSuperJets", &nSuperJets);   
+   t1->SetBranchAddress("tot_nAK4_50", &tot_nAK4_50);               //total #AK4 jets (E>50 GeV) for BOTH superjets
+   t1->SetBranchAddress("tot_nAK4_70", &tot_nAK4_70);   
+   t1->SetBranchAddress("diSuperJet_mass", &diSuperJet_mass);   
+   t1->SetBranchAddress("diSuperJet_mass_100", &diSuperJet_mass_100); 
+   t1->SetBranchAddress("nfatjet_pre", &nfatjet_pre); 
+   t1->SetBranchAddress("jet_pt", jet_pt);   
+   t1->SetBranchAddress("jet_eta", jet_eta);   
+   t1->SetBranchAddress("jet_mass", jet_mass);   
+   t1->SetBranchAddress("SJ_nAK4_50", SJ_nAK4_50);   
+   t1->SetBranchAddress("SJ_nAK4_70", SJ_nAK4_70);   
+   t1->SetBranchAddress("SJ_mass_50", SJ_mass_50);   
+   t1->SetBranchAddress("SJ_mass_70", SJ_mass_70); 
+   t1->SetBranchAddress("SJ_mass_150", SJ_mass_150);
+   t1->SetBranchAddress("nbtaggedAK4", &nbtaggedAK4);
+   t1->SetBranchAddress("totHT", &totHT);
+   t1->SetBranchAddress("SJ_nAK4_300", SJ_nAK4_300);
+   t1->SetBranchAddress("SJ_mass_300", SJ_mass_300);
+   t1->SetBranchAddress("SJ_mass_50", SJ_mass_50);
+   t1->SetBranchAddress("SJ_mass_600", SJ_mass_600);
+   t1->SetBranchAddress("SJ_mass_800", SJ_mass_800);
+   t1->SetBranchAddress("SJ_mass_1000", SJ_mass_1000);
+   t1->SetBranchAddress("superJet_mass", superJet_mass);   
+   t1->SetBranchAddress("SJ_AK4_50_mass", SJ_AK4_50_mass);   //mass of individual reclustered AK4 jets
+   t1->SetBranchAddress("SJ_AK4_70_mass", SJ_AK4_70_mass); 
+   t1->SetBranchAddress("SJ_nAK4_150", SJ_nAK4_150);   
+   t1->SetBranchAddress("SJ_nAK4_200", SJ_nAK4_200);  
+   t1->SetBranchAddress("SJ_nAK4_300", SJ_nAK4_300);     
+   t1->SetBranchAddress("SJ_nAK4_400", SJ_nAK4_400);   
+   t1->SetBranchAddress("SJ_nAK4_600", SJ_nAK4_600);   
+   t1->SetBranchAddress("SJ_nAK4_800", SJ_nAK4_800);   
+   t1->SetBranchAddress("SJ_nAK4_1000", SJ_nAK4_1000);   
+   t1->SetBranchAddress("nAK4" , &nAK4); 
+   t1->SetBranchAddress("SJ_mass_100", SJ_mass_100);   
+   t1->SetBranchAddress("SJ_nAK4_100", SJ_nAK4_100);   
+   t1->SetBranchAddress("AK4_E", AK4_E);  
+   t1->SetBranchAddress("daughter_mass_comb", daughter_mass_comb);   
+   t1->SetBranchAddress("resonance_mass_comb", &resonance_mass_comb);  
+   t1->SetBranchAddress("totMET", &totMET); 
+   t1->SetBranchAddress("posSJP", &posSJP); 
+   t1->SetBranchAddress("negSJP", &negSJP); 
+   t1->SetBranchAddress("AK4_bdisc", AK4_bdisc); 
+
+   t1->SetBranchAddress("AK4_mass", AK4_mass); 
+
+   t1->SetBranchAddress("SJ1_decision", &SJ1_decision); 
+   t1->SetBranchAddress("SJ2_decision", &SJ2_decision); 
+
+   t1->SetBranchAddress("lab_AK4_pt", AK4_pt); 
+
+   t1->SetBranchAddress("dijetMassOne", &dijetMassOne); 
+   t1->SetBranchAddress("dijetMassTwo", &dijetMassTwo); 
+
+   t1->SetBranchAddress("SJ_E", SJ_E); 
+   t1->SetBranchAddress("SJ_Px", SJ_Px); 
+   t1->SetBranchAddress("SJ_Py", SJ_Py); 
+   t1->SetBranchAddress("SJ_Pz", SJ_Pz); 
+   t1->SetBranchAddress("AK4_DeepJet_disc", AK4_DeepJet_disc); 
+
+
+
+
+   int totalEvents = 0;
+   int nPreselected = 0;
+   int totWithNoHeavyAK8 = 0;
+   int totWithNoLessHeavyAK8 = 0;
+   int nPassPreSelection = 0;
+   int nControlRegion = 0;
+   double looseDeepCSV = 0.1241;
+   double medDeepCSV   = 0.4184;
+   double tightDeepCSV = 0.7527;
+   int passHTandAK8 = 0;
+
+ 
+   double looseDeepCSV_DeepJet = 0.0490;
+   double medDeepCSV_DeepJet   = 0.2783;
+   double tightDeepCSV_DeepJet = 0.7100;
+
+   for (Int_t i=0;i<nentries;i++) 
+   {  
+      t1->GetEntry(i);
+
+
+      if(totHT < 3500) h_totHT_All->Fill(totHT);
+
+      totalEvents++;
+      h_MSJ_mass_vs_MdSJ_all->Fill(diSuperJet_mass,(superJet_mass[1]+superJet_mass[0])/2. );
+
+      //if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
+      if ( nfatjets < 3) continue;
+      h_totHT_All1->Fill(totHT);
+      if (totHT < 1500.) continue;
+      h_totHT_All2->Fill(totHT);
+
+      if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
+      {
+         totWithNoHeavyAK8++;
+         continue;
+      } 
+      h_totHT_All3->Fill(totHT);
+
+
+      h_nAK4->Fill(nAK4);
+
+      //int _nAK4 = 0;
+      for(int iii = 0;iii< nAK4; iii++)
+      {
+         //if(AK4_pt[iii] > 80.) _nAK4++;
+         h_AK4_DeepJet_disc_all->Fill(AK4_DeepJet_disc[iii]);
+      }    
+
+      int nTightBTags = 0, nMedBTags = 0, nLooseBtags =0;
+
+      for(int iii = 0;iii< nAK4; iii++)
+      {
+         h_AK4_DeepJet_disc->Fill(AK4_DeepJet_disc[iii]);
+         if (  (AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.) ) nTightBTags++;
+         if ( (AK4_DeepJet_disc[iii] > medDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.))     nMedBTags++;
+         if ( (AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.))   nLooseBtags++;
+      }
+      h_nTightBTags->Fill(nTightBTags);
+      h_nMidBTags->Fill(nMedBTags);
+      h_nLooseBTags->Fill(nLooseBtags);
+
+
+      /// control region 
+      if( nLooseBtags < 1 ) 
+      {
+
+            nControlRegion++;
+            h_SJ_nAK4_100_CR->Fill(SJ_nAK4_100[0]);
+            h_SJ_nAK4_100_CR->Fill(SJ_nAK4_100[1]);
+
+            h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[0]);
+            h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[1]);
+
+            h_SJ_mass_CR->Fill(superJet_mass[0]);
+            h_SJ_mass_CR->Fill(superJet_mass[1]);
+
+            h_disuperjet_mass_CR->Fill(diSuperJet_mass);
+
+            h_nfatjets_CR->Fill(nfatjets);
+            for(int iii = 0; iii< nfatjets; iii++)
+            {
+               h_AK8_jet_mass_CR->Fill(jet_mass[iii]);
+            }
+            h_nAK4_CR->Fill(nAK4);
+            for(int iii = 0; iii< nAK4; iii++)
+            {
+               h_AK4_jet_mass_CR->Fill(AK4_mass[iii]);
+            }
+            h_totHT_CR->Fill(totHT);
+
+            if(   (SJ_nAK4_300[0]>=2) && (SJ_mass_100[0]>400.)   )
+            {
+               if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
+               {
+                  h_MSJ_mass_vs_MdSJ_CR->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               }
+
+            }
+      }
+
+      nPassPreSelection++;
+      /*
+      // signal region
+      if ( (nLooseBtags > 1)  )
+      {
+      
+         h_SJ_nAK4_100_DT->Fill(SJ_nAK4_100[0]);
+         h_SJ_nAK4_100_DT->Fill(SJ_nAK4_100[1]);
+
+         h_SJ_nAK4_200_DT->Fill(SJ_nAK4_200[0]);
+         h_SJ_nAK4_200_DT->Fill(SJ_nAK4_200[1]);
+
+         h_SJ_mass_DT->Fill(superJet_mass[0]);
+         h_SJ_mass_DT->Fill(superJet_mass[1]);
+
+
+         h_nfatjets_DT->Fill(nfatjets);
+         for(int iii = 0; iii< nfatjets; iii++)
+         {
+            h_AK8_jet_mass_DT->Fill(jet_mass[iii]);
+         }
+         h_nAK4_DT->Fill(nAK4);
+         for(int iii = 0; iii< nAK4; iii++)
+         {
+            h_AK4_jet_mass_DT->Fill(AK4_mass[iii]);
+         }
+         h_totHT_DT->Fill(totHT);
+
+      
+         //double tagging CUT BASED
+         if(   (SJ_nAK4_300[0]>=2) && (SJ_mass_100[0]>400.)   )
+         {
+            if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
+            {
+               h_MSJ_mass_vs_MdSJ_doubleTag->Fill( diSuperJet_mass, (superJet_mass[1]+superJet_mass[0]   )/2.   );
+            }
+         }
+         h_disuperjet_mass_DT->Fill(diSuperJet_mass);
+         if(   (SJ_nAK4_300[0]>=2) && (SJ_mass_100[0]>400.)   )
+         {
+            if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
+            {
+               h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+            }
+
+      
+         }
+      }
+      */
+
+      //anti-tagging 
+      if(   (SJ_nAK4_50[0]<1) && (SJ_mass_100[0]<150.)   )
+      {
+         if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
+         {
+            h_totHT->Fill(totHT);
+            h_lead_SJ_mass->Fill(superJet_mass[1]);
+            h_MSJ_mass_vs_MdSJ->Fill(diSuperJet_mass,superJet_mass[1]);
+            h_SJ_nAK4_100->Fill(SJ_nAK4_100[1]);
+            h_SJ_nAK4_200->Fill(SJ_nAK4_200[1]);
+            h_SJ_nAK4_300->Fill(SJ_nAK4_300[1]);
+            h_SJ_nAK4_400->Fill(SJ_nAK4_400[1]);
+            h_diSJ_SJ_mass_ratio->Fill(diSuperJet_mass/(superJet_mass[0]+superJet_mass[1]));
+            h_lead_SJ_mass_100->Fill(SJ_mass_100[1]);
+
+         }
+         h_disuperjet_mass->Fill(diSuperJet_mass);
+         h_disuperjet_mass_100->Fill(diSuperJet_mass_100);
+         h_nfatjets_pre->Fill(nfatjet_pre);
+         h_avg_dijet_mass->Fill((dijetMassOne+dijetMassTwo)/2);
+
+      }
+
+      
+            // double tagging NN based
+      /*if(  (SJ1_decision<3) && (SJ2_decision<3)  )
+      {
+         {
+            h_MSJ_mass_vs_MdSJ_doubleTag->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+         }
+      }
+      */
+      nPreselected++;
+
+
+   }
+   std::cout << "nControlRegion / nTotal : " << nControlRegion << "/" << nPassPreSelection << std::endl;
+
+   h_MSJ_mass_vs_MdSJ_doubleTag->Draw("colz");
+   c1->SaveAs("h_MSJ_mass_vs_MdSJ_doubleTag_data.png");
+
+   h_MSJ_mass_vs_MdSJ_DT->Draw("colz");
+   c1->SaveAs("h_MSJ_mass_vs_MdSJ_DT_data.png");
+   h_MSJ_mass_vs_MdSJ_CR->Draw("colz");
+   c1->SaveAs("h_MSJ_mass_vs_MdSJ_CR_data.png");
+
+
+
+   h_SJ_nAK4_100_DT->Draw("colz");
+   c1->SaveAs("h_SJ_nAK4_100_DT_data.png");
+
+   h_SJ_nAK4_200_DT->Draw("colz");
+   c1->SaveAs("h_SJ_nAK4_200_DT_data.png");
+
+   h_SJ_mass_DT->Draw("colz");
+   c1->SaveAs("h_SJ_mass_DT_data.png");
+
+   h_disuperjet_mass_DT->Draw("colz");
+   c1->SaveAs("h_disuperjet_mass_DT_data.png");
+
+   h_MSJ_mass_vs_MdSJ_DT->Draw("colz");
+   c1->SaveAs("h_MSJ_mass_vs_MdSJ_DT_data.png");
+
+   h_SJ_nAK4_100_CR->Draw("colz");
+   c1->SaveAs("h_SJ_nAK4_100_CR_data.png");
+
+   h_SJ_nAK4_200_CR->Draw("colz");
+   c1->SaveAs("h_SJ_nAK4_200_CR_data.png");
+
+   h_SJ_mass_CR->Draw("colz");
+   c1->SaveAs("h_SJ_mass_CR_data.png");
+
+   h_disuperjet_mass_CR->Draw("colz");
+   c1->SaveAs("h_disuperjet_mass_CR_data.png");
+
+   h_MSJ_mass_vs_MdSJ_CR->Draw("colz");
+   c1->SaveAs("h_MSJ_mass_vs_MdSJ_CR_data.png");
+
+   h_nTightBTags->Draw();
+   c1->SaveAs("h_nTightBTags_data.png");
+   h_nMidBTags->Draw();
+   c1->SaveAs("h_nMidBTags_data.png");
+   h_nLooseBTags->Draw();
+   c1->SaveAs("h_nLooseBTags_data.png");
+
+
+   outFile.Write();
+   //outFile.Close();
+
+}
+
+
+void readTreeData()
+{
+
+   std::vector<std::string> inFileNames = {"/home/ethan/JetHT_combined.root" };
+
+   std::vector<std::string> outFileNames = {"/home/ethan/Documents/JetHT_combined_processed.root"};
+  
+   for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
+   {
+      doThings(inFileNames[iii],outFileNames[iii]);
+   }
+   std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
+
+}
