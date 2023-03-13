@@ -96,9 +96,9 @@ void readTreeMC()
    TH1F* h_MSJ1_MSJ2_ratio  = new TH1F("h_MSJ1_MSJ2_ratio","(M_{SJ_{1}} - M_{SJ_{2}})/(M_{SJ_{1}} + M_{SJ_{2}});",30,-3.,3.0);
    TH1F* h_MdiSJ_SJ12_ratios  = new TH1F("h_MdiSJ_SJ12_ratios","M_{diSJ} / (M_{SJ_{1}} + M_{SJ_{2}})",25,0.,5.0);
    TH2F *h_MSJ_mass_vs_MdSJ = new TH2F("h_MSJ_mass_vs_MdSJ","Anti-tagged event, tagged Superjet mass vs diSuperjet mass - MC Signal; diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
-  // TH2F *h_MSJ_mass_vs_MdSJ_doubleTag = new TH2F( "h_MSJ_mass_vs_MdSJ_doubleTag","Avg Double Tagged Superjet Mass vs diSuperjet mass - MC Signal; diSuperjet mass [GeV];avg superjet (VLQ) mass", 25,0, 10000, 20, 0, 6000);
-   TH2F *h_MSJ_mass_vs_MdSJ_doubleTag = new TH2F( "h_MSJ_mass_vs_MdSJ_doubleTag",("Avg Double Tagged (Cut-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
-   TH2F *h_MSJ_mass_vs_MdSJ_doubleTagNN = new TH2F( "h_MSJ_mass_vs_MdSJ_doubleTagNN",("Avg Double Tagged (NN-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
+  // TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F( "h_MSJ_mass_vs_MdSJ_DT","Avg Double Tagged Superjet Mass vs diSuperjet mass - MC Signal; diSuperjet mass [GeV];avg superjet (VLQ) mass", 25,0, 10000, 20, 0, 6000);
+   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F( "h_MSJ_mass_vs_MdSJ_DT",("Avg Double Tagged (Cut-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
+   TH2F *h_MSJ_mass_vs_MdSJ_DTNN = new TH2F( "h_MSJ_mass_vs_MdSJ_DTNN",("Avg Double Tagged (NN-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
 
    TH1I* h_NN_categories = new TH1I("h_NN_categories","Superjet NN Categorizations; Events",5,0,5);
 
@@ -187,8 +187,7 @@ void readTreeMC()
    int nDoubleTaggedNN = 0;
    int nAntiTaggedTagged = 0;
    int nAntiTaggedEvents = 0;
-   int totWithNoHeavyAK8 = 0;
-   int totWithNoLessHeavyAK8 = 0;
+
    int passHTandAK8 =0;
    double looseDeepCSV = 0.1241;
    double medDeepCSV   = 0.4184;
@@ -215,12 +214,10 @@ void readTreeMC()
       h_totalDisc->Fill(func(totHT,combinedNNScore,cutDisc));
 
 
-      if( (nfatjets < 3) || (totHT < 1500.)     ) continue;   
-
+      if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
 
       if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
       {
-         totWithNoHeavyAK8++;
          continue;
       } 
 
@@ -241,7 +238,7 @@ void readTreeMC()
       h_NN_categories->Fill(SJ2_decision);
 
       // control region
-      if( (nLooseBtags < 1) ) 
+      if( (nTightBTags < 1) ) 
       {
 
             h_SJ_nAK4_100_CR->Fill(SJ_nAK4_100[0]);
@@ -267,7 +264,7 @@ void readTreeMC()
 
 
       //signal region double tagging  CUT BASED
-      if ( nLooseBtags > 1)
+      if ( nTightBTags > 0)
       {
          nPreselected++;
 
@@ -277,7 +274,7 @@ void readTreeMC()
             if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
             {
                nDoubleTagged++;
-               h_MSJ_mass_vs_MdSJ_doubleTag->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
                h_SJ_mass->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
             }
          }
@@ -289,9 +286,9 @@ void readTreeMC()
          {
             {
                nDoubleTaggedNN++;
-               h_MSJ_mass_vs_MdSJ_doubleTagNN->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               h_MSJ_mass_vs_MdSJ_DTNN->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
 
-               //h_MSJ_mass_vs_MdSJ_doubleTag->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               //h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
                //h_SJ_mass->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
             }
          }
@@ -334,7 +331,7 @@ void readTreeMC()
    h_Mjet_vs_pTjet->Scale(Suu5TeV_chi2TeV_SF);
    h_diSJ_SJ_mass_ratio->Scale(Suu5TeV_chi2TeV_SF);
    h_MSJ_mass_vs_MdSJ->Scale(Suu5TeV_chi2TeV_SF);
-   h_MSJ_mass_vs_MdSJ_doubleTag->Scale(Suu5TeV_chi2TeV_SF);
+   h_MSJ_mass_vs_MdSJ_DT->Scale(Suu5TeV_chi2TeV_SF);
 
    h_SJ_ratio->Draw("HIST");
    c1->SaveAs("h_SJ_ratio.png");
@@ -381,16 +378,16 @@ void readTreeMC()
    h_MSJ_mass_vs_MdSJ_CR->Draw("colz");
    c1->SaveAs("h_MSJ_mass_vs_MdSJ_CR_sig.png");
 
-   h_MSJ_mass_vs_MdSJ_doubleTag->GetYaxis()->SetTitleOffset(1.35);
-   h_MSJ_mass_vs_MdSJ_doubleTag->GetYaxis()->SetLabelSize(0.015);
-   h_MSJ_mass_vs_MdSJ_doubleTag->Draw("colz");
+   h_MSJ_mass_vs_MdSJ_DT->GetYaxis()->SetTitleOffset(1.35);
+   h_MSJ_mass_vs_MdSJ_DT->GetYaxis()->SetLabelSize(0.015);
+   h_MSJ_mass_vs_MdSJ_DT->Draw("colz");
 /*
    auto legend = new TLegend(0.2,0.55,0.45,0.65);
    legend->SetHeader("","C"); // option "C" allows to center the header
-   legend->AddEntry(h_MSJ_mass_vs_MdSJ_doubleTag,("M_{S_{uu}}=" +sampleStringSuu + " TeV, M_{chi} =" + sampleStringChi+ " TeV").c_str() ,"f" );
+   legend->AddEntry(h_MSJ_mass_vs_MdSJ_DT,("M_{S_{uu}}=" +sampleStringSuu + " TeV, M_{chi} =" + sampleStringChi+ " TeV").c_str() ,"f" );
    legend->Draw();
    */
-   c1->SaveAs( ("h_MSJ_mass_vs_MdSJ_doubleTag_sig_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
+   c1->SaveAs( ("h_MSJ_mass_vs_MdSJ_DT_sig_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
 
 
 

@@ -37,8 +37,21 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
    TH1F* h_totHT_DT  = new TH1F("h_totHT_DT","Event H_{T} (DT region);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
    TH1F* h_totHT_CR  = new TH1F("h_totHT_CR","Event H_{T} (CR region);H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
 
-   TH1F* h_deepFlavour_score  = new TH1F("h_deepFlavour_score","DeepFlavour score for AK4 jets; bdisc score",24,0.,1.2);
-   TH1F* h_deepFlavour_score_highpt  = new TH1F("h_deepFlavour_score_highpt","DeepFlavour score for high pT (pT > 1 TeV) AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score  = new TH1F("h_deepFlavour_score","DeepFlavour scores for AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_pt1TeV  = new TH1F("h_deepFlavour_score_pt1TeV","DeepFlavour scores for high pT (pT > 1 TeV) AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_pt2TeV  = new TH1F("h_deepFlavour_score_pt2TeV","DeepFlavour scores for high pT (pT > 2 TeV) AK4 jets; bdisc score",24,0.,1.2);
+
+   TH1F* h_deepFlavour_score_trueb  = new TH1F("h_deepFlavour_score_trueb","True b jet deepFlavour scores for AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_trueb_pt1TeV  = new TH1F("h_deepFlavour_score_trueb_pt1TeV","True b jet deepFlavour scores for high pT (pT > 1 TeV) AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_trueb_pt2TeV  = new TH1F("h_deepFlavour_score_trueb_pt2TeV","True b jet deepFlavour scores for high pT (pT > 2 TeV) AK4 jets; bdisc score",24,0.,1.2);
+
+   TH1F* h_deepFlavour_score_truec  = new TH1F("h_deepFlavour_score_truec","True charm jet deepFlavour scores for AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_truec_pt1TeV  = new TH1F("h_deepFlavour_score_truec_pt1TeV","True charm jet deepFlavour scores for high pT (pT > 1 TeV) AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_truec_pt2TeV  = new TH1F("h_deepFlavour_score_truec_pt2TeV","True charm jet deepFlavour scores for high pT (pT > 2 TeV) AK4 jets; bdisc score",24,0.,1.2);
+
+   TH1F* h_deepFlavour_score_udsg  = new TH1F("h_deepFlavour_score_udsg","udsg jet deepFlavour scores for AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_udsg_pt1TeV  = new TH1F("h_deepFlavour_score_udsg_pt1TeV","udsg jet deepFlavour scores for high pT (pT > 1 TeV) AK4 jets; bdisc score",24,0.,1.2);
+   TH1F* h_deepFlavour_score_udsg_pt2TeV  = new TH1F("h_deepFlavour_score_udsg_pt2TeV","udsg jet deepFlavour scores for high pT (pT > 2 TeV) AK4 jets; bdisc score",24,0.,1.2);
 
    TH1I* h_nLooseBtags  = new TH1I("h_nLooseBtags","number of loose b tags (DeepFlavour);",10,-0.5,9.5);
 
@@ -132,14 +145,9 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
       medDeepJet   = 0.2783;
       tightDeepJet = 0.7100;
    }
-   int nGenBtags[50] = {0},nRECOBtags[50] = {0};
-
    for (Int_t i=0;i<nentries;i++) 
    {  
       t1->GetEntry(i);
-
-      
-      int HT_index = floor(totHT - 1200)/176.;
       
       if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
 
@@ -160,23 +168,21 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
       for(int iii = 0;iii< nAK4; iii++)
       {
 
-         //if ( (AK4_bdisc[iii] > looseDeepCSV ) && (AK4_pt[iii] > 80.) ) nLooseBtags++;
-
          if ( ( AK4_DeepJet_disc[iii] > looseDeepJet  ) && (AK4_pt[iii] > 30.))
          {
-            nRECOBtags[HT_index]++; 
             nBTagsRECO++;
          }
          if ( (AK4_DeepJet_disc[iii] > looseDeepJet ) && (AK4_pt[iii] > 30.) ) nLooseBtags++;
          if ( (AK4_DeepJet_disc[iii] > medDeepJet )   && (AK4_pt[iii] > 30.) )   nMedBtags++;
          if ( (AK4_DeepJet_disc[iii] > tightDeepJet ) && (AK4_pt[iii] > 30.) ) nTightBtags++;
+
          if( (abs(AK4_partonFlavour[iii])==5)  ) //&& (AK4_pt[iii] > 80.))
          {  
-            nGenBtags[HT_index]++;
             //nLooseBtags++;
             nBTagsGen++;
             if(AK4_DeepJet_disc[iii] > looseDeepJet) prof_taggingEfficiency_vs_HT->Fill(totHT,1.);
             else { prof_taggingEfficiency_vs_HT->Fill(totHT,0.); } 
+            h_deepFlavour_score_trueb->Fill(AK4_DeepJet_disc[iii]);
 
          }
          
@@ -184,17 +190,37 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
          {
             if(AK4_DeepJet_disc[iii] > looseDeepJet) prof_charm_mistaggingRate_vs_HT->Fill(totHT,1.);
             else { prof_charm_mistaggingRate_vs_HT->Fill(totHT,0.); } 
+            h_deepFlavour_score_truec->Fill(AK4_DeepJet_disc[iii]);
+
          }
    
          else   // the MC truth says this AK4 jet is NOT a b jet or c jet, but how often are they tagged as such?
          {
             if(AK4_DeepJet_disc[iii] > looseDeepJet) prof_udsg_mistaggingRate_vs_HT->Fill(totHT,1.);
             else { prof_udsg_mistaggingRate_vs_HT->Fill(totHT,0.); } 
+            h_deepFlavour_score_udsg->Fill(AK4_DeepJet_disc[iii]);
+
          }
 
          h_deepFlavour_score->Fill(AK4_DeepJet_disc[iii]);
-         if(AK4_pt[iii] > 1000.)h_deepFlavour_score_highpt->Fill(AK4_DeepJet_disc[iii]);
+
+         if (AK4_pt[iii] > 2000.)
+         {
+            h_deepFlavour_score_pt2TeV->Fill(AK4_DeepJet_disc[iii]);
+            if( (abs(AK4_partonFlavour[iii])==5)) h_deepFlavour_score_trueb_pt2TeV->Fill(AK4_DeepJet_disc[iii]);
+            else if( (abs(AK4_partonFlavour[iii])==4))h_deepFlavour_score_truec_pt2TeV->Fill(AK4_DeepJet_disc[iii]);
+            else {h_deepFlavour_score_udsg_pt2TeV->Fill(AK4_DeepJet_disc[iii]); }
+         }
+         else if(AK4_pt[iii] > 1000.)
+         {
+            h_deepFlavour_score_pt1TeV->Fill(AK4_DeepJet_disc[iii]);
+            if( (abs(AK4_partonFlavour[iii])==5))h_deepFlavour_score_trueb_pt1TeV->Fill(AK4_DeepJet_disc[iii]);
+            else if( (abs(AK4_partonFlavour[iii])==4))h_deepFlavour_score_truec_pt1TeV->Fill(AK4_DeepJet_disc[iii]);
+            else {h_deepFlavour_score_udsg_pt1TeV->Fill(AK4_DeepJet_disc[iii]); }
+         }
          prof_avg_DeepJetDisc_vs_HT->Fill(totHT, AK4_DeepJet_disc[iii]);
+
+
 
       }
       prof_nGenBtags_vs_HT->Fill(totHT,nBTagsGen);
@@ -205,7 +231,7 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
 
       h_nLooseBtags->Fill(nLooseBtags);
       /// control region 
-      if( nBTagsGen < 1 ) 
+      if( nTightBtags < 1 ) 
       {
          h_totHT_CR->Fill(totHT);
          h_SJ_mass_CR->Fill(superJet_mass[0]);
@@ -217,7 +243,7 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
       }
 
       // signal region
-      if ( (nBTagsGen > 1)  )
+      if ( (nTightBtags > 0)  )
       {
          h_totHT_DT->Fill(totHT);
          h_SJ_mass_DT->Fill(superJet_mass[0]);
@@ -231,35 +257,10 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
    }
 
 
-   double eff[50], HT[50];
-   for(int iii=0;iii<50;iii++)
-   {
-      HT[iii] = 176*iii+1200.;
-      if(nGenBtags[iii]>0) eff[iii] = double(nRECOBtags[iii])/double(nGenBtags[iii]);
-      else {eff[iii] = 0;}
-   }
+
   TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
 
-   auto g_bTagEff_vs_HT = new TGraph(50,HT,eff);
-   g_bTagEff_vs_HT->SetTitle("bTagEff vs HT;HT;nGenBtags/nRECOBtags");
-   g_bTagEff_vs_HT->Draw("AC*");
-   c1->SaveAs( ("g_bTagEff_vs_HT_looseWP_" + dataYear+".png").c_str()  ); 
-
-   double nGenBtags_double[50],nRECOBtags_double[50];
-   for(int iii=0;iii<50;iii++)
-   {
-      nGenBtags_double[iii] = double(nGenBtags[iii]);
-      nRECOBtags_double[iii] = double(nRECOBtags[iii]);
-   }
-   auto g_nGenBtags_vs_HT = new TGraph(50,HT,nGenBtags_double);
-   g_nGenBtags_vs_HT->SetTitle("nGenBtags vs HT;HT;nGenBtags");
-   g_nGenBtags_vs_HT->Draw("AC*");
-   c1->SaveAs( ("g_nGenBtags_vs_HT_looseWP_" + dataYear+".png").c_str()  ); 
-
-
-   auto g_nRECOBtags_vs_HT = new TGraph(50,HT,nRECOBtags_double);
-   g_nRECOBtags_vs_HT->SetTitle("nRECOBtags vs HT;HT;nRECOBtags");
-   g_nRECOBtags_vs_HT->Draw("AC*");
+/*
    c1->SaveAs( ("g_nRECOBtags_vs_HT_looseWP_" + dataYear+".png").c_str()  ); 
 
    prof_nGenBtags_vs_HT->Draw();
@@ -282,7 +283,7 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
    c1->SaveAs( ("prof_nRECOBtags_vs_HT_DT_looseWP_" + dataYear+".png").c_str()  ); 
 
    prof_nRECOBTag_nGenBTag_ratio->Draw();
-   c1->SaveAs( ("prof_nRECOBTag_nGenBTag_ratio_looseWP_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_nRECOBTag_nGenBTag_ratio_looseWP_" + dataYear+".png").c_str()  nTightBtags); 
 
 
    prof_taggingEfficiency_vs_HT->SetTitle("b-tagging Efficiency vs HT;event HT;Eff");
@@ -314,14 +315,36 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
    h_deepFlavour_score->Draw();
    c1->SaveAs( ("h_deepFlavour_score_looseWP_" + dataYear+".png").c_str()  ); 
 
-   h_deepFlavour_score_highpt->Draw();
-   c1->SaveAs( ("h_deepFlavour_score_highpt_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_pt1TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_pt1TeV_" + dataYear+".png").c_str()  ); 
+
+   h_deepFlavour_score_pt2TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_pt2TeV_" + dataYear+".png").c_str()  ); 
 
 
 
+   h_deepFlavour_score_trueb->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_trueb_" + dataYear+".png").c_str()  ); 
 
+   h_deepFlavour_score_trueb_pt2TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_trueb_pt2TeV_" + dataYear+".png").c_str()  ); 
 
+   h_deepFlavour_score_trueb_pt1TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_trueb_pt1TeV_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_truec->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_truec_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_truec_pt2TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_truec_pt2TeV_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_truec_pt1TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_truec_pt1TeV_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_udsg->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_udsg_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_udsg_pt2TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_udsg_pt2TeV_" + dataYear+".png").c_str()  ); 
+   h_deepFlavour_score_udsg_pt1TeV->Draw();
+   c1->SaveAs( ("h_deepFlavour_score_udsg_pt1TeV_" + dataYear+".png").c_str()  ); 
 
+   */
    outFile.Write();
 
 }
@@ -351,9 +374,9 @@ void readTreeMCBRSimple()
    else
    {
 
-      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT1000to1500_" + dataYear + ".root").c_str(),("/home/ethan/QCD_HT1500to2000_" + dataYear + ".root").c_str(), ("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
 
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str()};
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str()};
       //std::vector<std::string> inFileNames = {"/home/ethan/QCD_HT2000toInf.root"};
 
       //std::vector<std::string> outFileNames = {"/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST.root"};

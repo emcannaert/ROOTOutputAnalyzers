@@ -147,7 +147,7 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
 
          //if ( (AK4_bdisc[iii] > looseDeepCSV ) && (AK4_pt[iii] > 80.) ) nLooseBtags++;
 
-         if ( ( AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet  ) && (AK4_pt[iii] > 30.))
+         if ( ( AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet  ) && (AK4_pt[iii] > 30.))
          {
             nRECOBtags[HT_index]++; 
             nBTagsRECO++;
@@ -160,21 +160,21 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
             nGenBtags[HT_index]++;
             //nLooseBtags++;
             nBTagsGen++;
-            if(AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet) prof_taggingEfficiency_vs_pT->Fill(AK4_pt[iii],1.);
+            if(AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet) prof_taggingEfficiency_vs_pT->Fill(AK4_pt[iii],1.);
             else { prof_taggingEfficiency_vs_pT->Fill(AK4_pt[iii],0.); } 
 
          }
          
          else if( (abs(AK4_partonFlavour[iii])==4) )   // the MC truth says this AK4 jet is NOT a b jet, but rather a c jet - how often are they tagged as b jets?
          {
-            if(AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet) prof_charm_mistaggingRate_vs_pT->Fill(AK4_pt[iii],1.);
+            if(AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet) prof_charm_mistaggingRate_vs_pT->Fill(AK4_pt[iii],1.);
             else { prof_charm_mistaggingRate_vs_pT->Fill(AK4_pt[iii],0.); } 
          }
    
    
          else   // the MC truth says this AK4 jet is NOT a b jet or c jet, but how often are they tagged as such?
          {
-            if(AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet) prof_udsg_mistaggingRate_vs_pT->Fill(AK4_pt[iii],1.);
+            if(AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet) prof_udsg_mistaggingRate_vs_pT->Fill(AK4_pt[iii],1.);
             else { prof_udsg_mistaggingRate_vs_pT->Fill(AK4_pt[iii],0.); } 
          }
 
@@ -194,8 +194,8 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
          h_SJ_mass_CR->Fill(superJet_mass[0]);
          h_SJ_mass_CR->Fill(superJet_mass[1]);
          h_disuperjet_mass_CR->Fill(diSuperJet_mass);
-         prof_nGenBtags_vs_pT_CR->Fill(totHT,nBTagsGen);
-         prof_nRECOBtags_vs_pT_CR->Fill(totHT,nBTagsRECO);
+         prof_nGenBtags_vs_pT_tightWP_CR->Fill(totHT,nBTagsGen);
+         prof_nRECOBtags_vs_pT_tightWP_CR->Fill(totHT,nBTagsRECO);
 
       }
 
@@ -206,8 +206,8 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
          h_SJ_mass_DT->Fill(superJet_mass[0]);
          h_SJ_mass_DT->Fill(superJet_mass[1]);
          h_disuperjet_mass_DT->Fill(diSuperJet_mass);
-         prof_nGenBtags_vs_pT_DT->Fill(totHT,nBTagsGen);
-         prof_nRECOBtags_vs_pT_DT->Fill(totHT,nBTagsRECO);
+         prof_nGenBtags_vs_pT_tightWP_DT->Fill(totHT,nBTagsGen);
+         prof_nRECOBtags_vs_pT_tightWP_DT->Fill(totHT,nBTagsRECO);
 
       }
       */
@@ -225,22 +225,22 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
   TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
 
 
-   prof_taggingEfficiency_vs_pT->SetTitle("b-tagging Efficiency vs HT;event HT;Eff");
+   h_deepFlavour_score_udsg_pt1TeV->SetTitle("b-tagging Efficiency vs HT;event HT;Eff");
    prof_taggingEfficiency_vs_pT->Draw();
-   c1->SaveAs( ("prof_taggingEfficiency_vs_pT_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_taggingEfficiency_vs_pT_tightWP_" + dataYear+".png").c_str()  ); 
 
    prof_avg_DeepJetDisc_vs_pT->SetTitle("Average AK4 DeepJet Score vs Event HT;event HT;avg btag score");
    prof_avg_DeepJetDisc_vs_pT->Draw();
-   c1->SaveAs( ("prof_avg_DeepJetDisc_vs_pT_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_avg_DeepJetDisc_vs_pT_tightWP_" + dataYear+".png").c_str()  ); 
 
    prof_nonb_mistaggingRate_vs_pT->Draw();
-   c1->SaveAs( ("prof_nonb_mistaggingRate_vs_pT_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_nonb_mistaggingRate_vs_pT_tightWP_" + dataYear+".png").c_str()  ); 
 
    prof_charm_mistaggingRate_vs_pT->Draw();
-   c1->SaveAs( ("prof_charm_mistaggingRate_vs_pT_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_charm_mistaggingRate_vs_pT_tightWP_" + dataYear+".png").c_str()  ); 
 
    prof_udsg_mistaggingRate_vs_pT->Draw();
-   c1->SaveAs( ("prof_udsg_mistaggingRate_vs_pT_" + dataYear+".png").c_str()  ); 
+   c1->SaveAs( ("prof_udsg_mistaggingRate_vs_pT_tightWP_" + dataYear+".png").c_str()  ); 
 
 
 

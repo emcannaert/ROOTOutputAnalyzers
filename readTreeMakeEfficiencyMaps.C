@@ -25,13 +25,18 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
    double AK4_ptot[100], AK4_eta[100], AK4_phi[100];
    int nGenBJets_AK4[100], AK4_partonFlavour[100],AK4_HadronFlavour[100];
 
-   TH2F *h_nLightJets = new TH2F( ("h_nLightJets_"+ dataYear).c_str() ,"total number of true light jets; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
-   TH2F *h_nTruebJets = new TH2F( ("h_nTruebJets"+ dataYear).c_str() ,"total number of true b jets; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
-   TH2F *h_nTruecJets = new TH2F( ("h_nTruecJets"+ dataYear).c_str() ,"total number of true c jets; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
+   TH2F *h_nLightJets = new TH2F("h_nLightJets" ,"total number of true light jets; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_nTruebJets = new TH2F("h_nTruebJets" ,"total number of true b jets; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_nTruecJets = new TH2F("h_nTruecJets" ,"total number of true c jets; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
 
-   TH2F *h_nLightJets_btagged = new TH2F( ("h_nLightJets_btagged_"+ dataYear).c_str() ,"total number of true light jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
-   TH2F *h_nTruebJets_btagged = new TH2F( ("h_nTruebJets_btagged_"+ dataYear).c_str() ,"total number of true b jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
-   TH2F *h_nTruecJets_btagged = new TH2F( ("h_nTruecJets_btagged_"+ dataYear).c_str() ,"total number of true c jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 5000, 24, -2.4, 2.4);
+   TH2F *h_nLightJets_btagged = new TH2F("h_nLightJets_btagged" ,"total number of true light jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_nTruebJets_btagged = new TH2F("h_nTruebJets_btagged" ,"total number of true b jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_nTruecJets_btagged = new TH2F("h_nTruecJets_btagged" ,"total number of true c jets that are b-tagged; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+
+
+   TH2F *h_effLightJets = new TH2F( "h_effLightJets" ,"total number of true light jets that are b-tagged / total number of true light; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_effbJets = new TH2F( "h_effbJets" ,"total number of true b jets that are b-tagged / total number of true b jets; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
+   TH2F *h_effcJets = new TH2F( "h_effcJets" ,"total number of true c jets that are b-tagged / total number of true c jets; jet p_{T} [GeV];jet eta", 50,0, 2500, 24, -2.4, 2.4);
 
    const char *_inFilename = inFileName.c_str();
    const char *_outFilename = outFileName.c_str();
@@ -120,33 +125,58 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
       for(int iii = 0;iii< nAK4; iii++)
       {
 
-         if(AK4_hadronFlavour[iii] == 1)   //light jets
+         if(AK4_HadronFlavour[iii] == 0)   //light jets
          {
-            h_nLightJets->Fill(AK4_eta);
-            if(AK4_DeepJet_disc[iii] > looseDeepJet)
+            h_nLightJets->Fill(AK4_pt[iii],AK4_eta[iii]);
+            if(AK4_DeepJet_disc[iii] > tightDeepJet)
             {
                h_nLightJets_btagged->Fill(AK4_pt[iii],AK4_eta[iii]);
+               h_effLightJets->Fill(AK4_pt[iii],AK4_eta[iii]);
             }
          }
-         else if(AK4_hadronFlavour[iii] == 4) //charm jets
+         else if(AK4_HadronFlavour[iii] == 4) //charm jets
          {
-            h_nTruecJets->Fill();
-            if(AK4_DeepJet_disc[iii] > looseDeepJet)
+            h_nTruecJets->Fill(AK4_pt[iii],AK4_eta[iii]);
+            if(AK4_DeepJet_disc[iii] > tightDeepJet)
             {
                h_nTruecJets_btagged->Fill(AK4_pt[iii],AK4_eta[iii]);
+               h_effcJets->Fill(AK4_pt[iii],AK4_eta[iii]);
             }
          }
-         else if(AK4_hadronFlavour[iii] == 5) // b jets
+         else if(AK4_HadronFlavour[iii] == 5) // b jets
          {
-            h_nTruebJets->Fill();
-            if(AK4_DeepJet_disc[iii] > looseDeepJet)
+            h_nTruebJets->Fill(AK4_pt[iii],AK4_eta[iii]);
+            if(AK4_DeepJet_disc[iii] > tightDeepJet)
             {
                h_nTruebJets_btagged->Fill(AK4_pt[iii],AK4_eta[iii]);
+               h_effbJets->Fill(AK4_pt[iii],AK4_eta[iii]);
             }
 
          }
       }
    }
+
+
+
+   /*
+      TH2F *h_nLightJets = new TH2F( ("h_nLightJets_"+ dataYear).c_str() ,"total number of true light jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+   TH2F *h_nTruebJets = new TH2F( ("h_nTruebJets"+ dataYear).c_str() ,"total number of true b jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+   TH2F *h_nTruecJets = new TH2F( ("h_nTruecJets"+ dataYear).c_str() ,"total number of true c jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+
+   TH2F *h_nLightJets_btagged = new TH2F( ("h_nLightJets_btagged_"+ dataYear).c_str() ,"total number of true light jets that are b-tagged; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+   TH2F *h_nTruebJets_btagged = new TH2F( ("h_nTruebJets_btagged_"+ dataYear).c_str() ,"total number of true b jets that are b-tagged; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+   TH2F *h_nTruecJets_btagged = new TH2F( ("h_nTruecJets_btagged_"+ dataYear).c_str() ,"total number of true c jets that are b-tagged; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+
+   */
+
+   h_effLightJets->Divide(h_nLightJets);
+   h_effcJets->Divide(h_nTruecJets);
+   h_effbJets->Divide(h_nTruebJets);
+
+  TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
+
+   h_effbJets->Draw("colz");
+   c1->SaveAs("h_effbJets.png"); 
 
    outFile.Write();
 }
@@ -172,12 +202,12 @@ void readTreeMakeEfficiencyMaps()
       {
          std::cout << *iii << " ";
       }
-      std::endl;
+      std::cout << std::endl;
    }
    else
    {
 
-      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = { ("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
       std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_efficiencyMap_"+ dataYear + ".root").c_str()};
 
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
@@ -190,7 +220,7 @@ void readTreeMakeEfficiencyMaps()
       {
          std::cout << *iii << " ";
       }
-      std::endl;
+      std::cout << std::endl;
 
    }
 

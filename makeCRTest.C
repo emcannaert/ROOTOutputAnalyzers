@@ -32,9 +32,9 @@ void makeCRTest()
   bool includeTTBar = true;
 
   std::cout << "Open Files" << std::endl;
-  TFile *f1 = new TFile("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed_TEST.root");   //need to add these two together
-  TFile *f2 = new TFile("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed_TEST.root");
-  TFile *f3 = new TFile("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST.root"); 
+  TFile *f1 = new TFile("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed_TEST_2018.root");   //need to add these two together
+  TFile *f2 = new TFile("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed_TEST_2018.root");
+  TFile *f3 = new TFile("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST_2018.root"); 
 
 //  TFile *f4 = new TFile("/home/ethan/Documents/TTToHadronic_combined_cutbased_processed_TEST.root");  
  // TFile *f5 = new TFile("/home/ethan/Documents/TTTo2l2nu_combine_cutbased_processed_TEST.root");   
@@ -46,7 +46,7 @@ void makeCRTest()
 
   TH1F* h_totHT_QCD_HT1000to1500_CR           =      (TH1F*)f1->Get("h_totHT_CR");
   TH1F* h_totHT_QCD_HT1000to1500_DT           =      (TH1F*)f1->Get("h_totHT_DT");
-  TH1F* h_deepFlavour_score_HT1000to1500      =      (TH1F*)f1->Get("h_deepFlavour_score");
+  //TH1F* h_deepFlavour_score_HT1000to1500      =      (TH1F*)f1->Get("h_deepFlavour_score");
   TH1I* h_nLooseBtags_HT1000to1500            =      (TH1I*)f1->Get("h_nLooseBtags");
 
   TH1F* h_SJ_mass_HT1000to1500_DT            =      (TH1F*)f1->Get("h_SJ_mass_DT");
@@ -61,7 +61,7 @@ void makeCRTest()
 
   TH1F* h_totHT_QCD_HT1500to2000_CR           =      (TH1F*)f2->Get("h_totHT_CR");
   TH1F* h_totHT_QCD_HT1500to2000_DT           =      (TH1F*)f2->Get("h_totHT_DT");
-  TH1F* h_deepFlavour_score_HT1500to2000      =      (TH1F*)f2->Get("h_deepFlavour_score");
+  //TH1F* h_deepFlavour_score_HT1500to2000      =      (TH1F*)f2->Get("h_deepFlavour_score");
   TH1I* h_nLooseBtags_HT1500to2000            =      (TH1I*)f2->Get("h_nLooseBtags");
 
 
@@ -76,7 +76,7 @@ void makeCRTest()
 
   TH1F* h_totHT_QCD_HT2000toInf_CR           =      (TH1F*)f3->Get("h_totHT_CR");
   TH1F* h_totHT_QCD_HT2000toInf_DT           =      (TH1F*)f3->Get("h_totHT_DT");
-  TH1F* h_deepFlavour_score_HT2000toInf      =      (TH1F*)f3->Get("h_deepFlavour_score");
+  //TH1F* h_deepFlavour_score_HT2000toInf      =      (TH1F*)f3->Get("h_deepFlavour_score");
   TH1I* h_nLooseBtags_HT2000toInf            =      (TH1I*)f3->Get("h_nLooseBtags");
 
   TH1F* h_SJ_mass_HT2000toInf_DT           =      (TH1F*)f3->Get("h_SJ_mass_DT");
@@ -135,13 +135,13 @@ void makeCRTest()
 
 
 
-  h_deepFlavour_score_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_deepFlavour_score_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_deepFlavour_score_HT2000toInf->Scale(QCD_HT2000toInf_SF);
+  //h_deepFlavour_score_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+  //h_deepFlavour_score_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+  //h_deepFlavour_score_HT2000toInf->Scale(QCD_HT2000toInf_SF);
 
-  h_nLooseBtags_HT1000to1500->Scale();
-  h_nLooseBtags_HT1500to2000->Scale();
-  h_nLooseBtags_HT2000toInf->Scale();
+  //h_nLooseBtags_HT1000to1500->Scale();
+ // h_nLooseBtags_HT1500to2000->Scale();
+ // h_nLooseBtags_HT2000toInf->Scale();
 /*
   h_totHT_TTToHadronic_CR->Scale(h_TTToHadronic_SF);
   h_totHT_TTToHadronic_DT->Scale(h_TTToHadronic_SF);
@@ -164,28 +164,31 @@ void makeCRTest()
   TH1F *h_totHT_CR = new TH1F(*h_totHT_QCD_HT2000toInf_CR);    //);
   h_totHT_CR->Add(h_totHT_QCD_HT1000to1500_CR);
   h_totHT_CR->Add(h_totHT_QCD_HT1500to2000_CR);
+
+
   //h_totHT_CR->Add(h_totHT_TTToHadronic_CR);
   //h_totHT_CR->Add(h_totHT_TTTo2l2nu_CR);
   //h_totHT_CR->Add(h_totHT_TTtoSemiLeptonic_CR);
-    h_totHT_CR->Scale(1./h_totHT_CR->Integral());
+  h_totHT_CR->Scale(1./h_totHT_CR->Integral());
 
   TH1F *h_totHT_DT = new TH1F(*h_totHT_QCD_HT2000toInf_DT); //); 
   h_totHT_DT->Add(h_totHT_QCD_HT1000to1500_DT);
   h_totHT_DT->Add(h_totHT_QCD_HT1500to2000_DT);
+
   //h_totHT_DT->Add(h_totHT_TTToHadronic_DT);
   //h_totHT_DT->Add(h_totHT_TTTo2l2nu_DT);
   //h_totHT_DT->Add(h_totHT_TTtoSemiLeptonic_DT);
-    h_totHT_DT->Scale(1./h_totHT_DT->Integral());
+  h_totHT_DT->Scale(1./h_totHT_DT->Integral());
 
-  TH1F *h_deepFlavour_score = new TH1F(*h_deepFlavour_score_HT2000toInf);//);
-  h_deepFlavour_score->Add(h_deepFlavour_score_HT1000to1500);
-  h_deepFlavour_score->Add(h_deepFlavour_score_HT1500to2000);
+  //TH1F *h_deepFlavour_score = new TH1F(*h_deepFlavour_score_HT2000toInf);//);
+  //h_deepFlavour_score->Add(h_deepFlavour_score_HT1000to1500);
+  //h_deepFlavour_score->Add(h_deepFlavour_score_HT1500to2000);
   //h_totHT_DT->Add(h_totHT_TTToHadronic_DT);
   //h_totHT_DT->Add(h_totHT_TTTo2l2nu_DT);
   //h_totHT_DT->Add(h_totHT_TTtoSemiLeptonic_DT);
-  h_deepFlavour_score->Scale(1./h_deepFlavour_score->Integral());
+  //h_deepFlavour_score->Scale(1./h_deepFlavour_score->Integral());
 
-
+/*
   TH1I *h_nLooseBtags = new TH1I(*h_nLooseBtags_HT2000toInf);//);
   h_nLooseBtags->Add(h_nLooseBtags_HT1000to1500);
   h_nLooseBtags->Add(h_nLooseBtags_HT1500to2000);
@@ -193,7 +196,7 @@ void makeCRTest()
   //h_nLooseBtags->Add(h_nLooseBtags_TTTo2l2nu_DT);
   //h_nLooseBtags->Add(h_nLooseBtags_TTtoSemiLeptonic_DT);
   h_nLooseBtags->Scale(1./h_nLooseBtags->Integral());
-
+*/
 
   TH1F *h_SJ_mass_DT = new TH1F(*h_SJ_mass_HT2000toInf_DT);    //);
   h_SJ_mass_DT->Add(h_SJ_mass_HT1500to2000_DT);
@@ -223,13 +226,13 @@ void makeCRTest()
   TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
 
 
-  h_deepFlavour_score->Draw("HIST");
-  c1->SaveAs("h_deepFlavour_score.png");
+  //h_deepFlavour_score->Draw("HIST");
+  //c1->SaveAs("h_deepFlavour_score.png");
 
 
 
-  h_nLooseBtags->Draw();
-  c1->SaveAs("h_nLooseBtags_TEST.png");
+  //h_nLooseBtags->Draw();
+  //c1->SaveAs("h_nLooseBtags_TEST.png");
 
    gPad->SetLogy();
 

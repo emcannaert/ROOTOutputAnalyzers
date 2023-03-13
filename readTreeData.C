@@ -57,7 +57,7 @@ void doThings(std::string inFileName, std::string outFileName)
    TH1F* h_totHT  = new TH1F("h_totHT","Total Event HT;H_{T} [GeV]; Events / 200 GeV",50,0.,10000);
    TH1F* h_lead_SJ_mass  = new TH1F("h_lead_SJ_mass","SuperJet Mass;Mass [GeV]; Events / 100 GeV",40,0.,4000);
    TH1F* h_lead_SJ_mass_100  = new TH1F("h_lead_SJ_mass_100","SuperJet Mass (E_{AK4} > 100 GeV);Mass [GeV]; Events / 100 GeV",40,0.,4000);
-   TH1F* h_disuperjet_mass  = new TH1F("h_disuperjet_mass","diSuperJet Mass;Mass [GeV]; Events / 400 GeV",25,0.,10000);
+   TH1F* h_disuperjet_mass  = new TH1F("h_disuperjet_mass","diSuperJet Mass;Mass [GeV]; Events / 200 GeV",50,0.,10000);
    TH1F* h_disuperjet_mass_100  = new TH1F("h_disuperjet_mass_100","diSuperJet Mass (E_{AK4} > 100 GeV);Mass [GeV]; Events / 200 GeV",50,0.,10000);
 
    TH1I* h_SJ_nAK4_100  = new TH1I("h_SJ_nAK4_100","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ ;nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
@@ -81,7 +81,7 @@ void doThings(std::string inFileName, std::string outFileName)
    // control region stuff 
    TH1I* h_SJ_nAK4_100_CR  = new TH1I("h_SJ_nAK4_100_CR","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
    TH1I* h_SJ_nAK4_200_CR  = new TH1I("h_SJ_nAK4_200_CR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
-   TH1F* h_SJ_mass_CR  = new TH1F("h_SJ_mass_CR","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 200 GeV",20,0.,4000);
+   TH1F* h_SJ_mass_CR  = new TH1F("h_SJ_mass_CR","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 125 GeV",40,0.,5000);
    TH1F* h_disuperjet_mass_CR  = new TH1F("h_disuperjet_mass_CR","diSuperJet Mass (Control Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
    TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
 
@@ -90,7 +90,7 @@ void doThings(std::string inFileName, std::string outFileName)
    // double-tag stuff
    TH1I* h_SJ_nAK4_100_DT  = new TH1I("h_SJ_nAK4_100_DT","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
    TH1I* h_SJ_nAK4_200_DT = new TH1I("h_SJ_nAK4_200_DT","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
-   TH1F* h_SJ_mass_DT  = new TH1F("h_SJ_mass_DT","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 200 GeV",20,0.,4000);
+   TH1F* h_SJ_mass_DT  = new TH1F("h_SJ_mass_DT","SuperJet Mass (Signal Region) ;Mass [GeV]; Events / 125 GeV",40,0.,5000);
    TH1F* h_disuperjet_mass_DT  = new TH1F("h_disuperjet_mass_DT","diSuperJet Mass (Control Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
    TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F("h_MSJ_mass_vs_MdSJ_DT","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
 
@@ -205,13 +205,6 @@ void doThings(std::string inFileName, std::string outFileName)
    t1->SetBranchAddress("AK4_DeepJet_disc", AK4_DeepJet_disc); 
 
 
-
-
-   int totalEvents = 0;
-   int nPreselected = 0;
-   int totWithNoHeavyAK8 = 0;
-   int totWithNoLessHeavyAK8 = 0;
-   int nPassPreSelection = 0;
    int nControlRegion = 0;
    double looseDeepCSV = 0.1241;
    double medDeepCSV   = 0.4184;
@@ -227,37 +220,19 @@ void doThings(std::string inFileName, std::string outFileName)
    {  
       t1->GetEntry(i);
 
-
-      if(totHT < 3500) h_totHT_All->Fill(totHT);
-
-      totalEvents++;
       h_MSJ_mass_vs_MdSJ_all->Fill(diSuperJet_mass,(superJet_mass[1]+superJet_mass[0])/2. );
 
-      //if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
-      if ( nfatjets < 3) continue;
-      h_totHT_All1->Fill(totHT);
-      if (totHT < 1500.) continue;
-      h_totHT_All2->Fill(totHT);
+      if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
 
       if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
       {
-         totWithNoHeavyAK8++;
          continue;
       } 
-      h_totHT_All3->Fill(totHT);
 
 
       h_nAK4->Fill(nAK4);
 
-      //int _nAK4 = 0;
-      for(int iii = 0;iii< nAK4; iii++)
-      {
-         //if(AK4_pt[iii] > 80.) _nAK4++;
-         h_AK4_DeepJet_disc_all->Fill(AK4_DeepJet_disc[iii]);
-      }    
-
       int nTightBTags = 0, nMedBTags = 0, nLooseBtags =0;
-
       for(int iii = 0;iii< nAK4; iii++)
       {
          h_AK4_DeepJet_disc->Fill(AK4_DeepJet_disc[iii]);
@@ -271,7 +246,7 @@ void doThings(std::string inFileName, std::string outFileName)
 
 
       /// control region 
-      if( nLooseBtags < 1 ) 
+      if( nTightBTags < 1 ) 
       {
 
             nControlRegion++;
@@ -281,8 +256,9 @@ void doThings(std::string inFileName, std::string outFileName)
             h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[0]);
             h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[1]);
 
-            h_SJ_mass_CR->Fill(superJet_mass[0]);
-            h_SJ_mass_CR->Fill(superJet_mass[1]);
+            h_SJ_mass_CR->Fill( (superJet_mass[0]+superJet_mass[1])/2.    );
+            //h_SJ_mass_CR->Fill( superJet_mass[0]    );
+            //h_SJ_mass_CR->Fill( superJet_mass[1]    );
 
             h_disuperjet_mass_CR->Fill(diSuperJet_mass);
 
@@ -307,8 +283,6 @@ void doThings(std::string inFileName, std::string outFileName)
 
             }
       }
-
-      nPassPreSelection++;
       /*
       // signal region
       if ( (nLooseBtags > 1)  )
@@ -358,6 +332,7 @@ void doThings(std::string inFileName, std::string outFileName)
       }
       */
 
+      /*
       //anti-tagging 
       if(   (SJ_nAK4_50[0]<1) && (SJ_mass_100[0]<150.)   )
       {
@@ -380,7 +355,7 @@ void doThings(std::string inFileName, std::string outFileName)
          h_avg_dijet_mass->Fill((dijetMassOne+dijetMassTwo)/2);
 
       }
-
+      */
       
             // double tagging NN based
       /*if(  (SJ1_decision<3) && (SJ2_decision<3)  )
@@ -390,10 +365,9 @@ void doThings(std::string inFileName, std::string outFileName)
          }
       }
       */
-      nPreselected++;
-
 
    }
+   /*
    std::cout << "nControlRegion / nTotal : " << nControlRegion << "/" << nPassPreSelection << std::endl;
 
    h_MSJ_mass_vs_MdSJ_doubleTag->Draw("colz");
@@ -443,7 +417,7 @@ void doThings(std::string inFileName, std::string outFileName)
    h_nLooseBTags->Draw();
    c1->SaveAs("h_nLooseBTags_data.png");
 
-
+*/
    outFile.Write();
    //outFile.Close();
 
@@ -453,9 +427,9 @@ void doThings(std::string inFileName, std::string outFileName)
 void readTreeData()
 {
 
-   std::vector<std::string> inFileNames = {"/home/ethan/JetHT_combined.root" };
+   std::vector<std::string> inFileNames = {"/home/ethan/JetHT_2018A.root","/home/ethan/JetHT_2018B.root","/home/ethan/JetHT_2018C.root","/home/ethan/JetHT_2018D.root" };
 
-   std::vector<std::string> outFileNames = {"/home/ethan/Documents/JetHT_combined_processed.root"};
+   std::vector<std::string> outFileNames = {"/home/ethan/Documents/JetHT_2018A_processed.root","/home/ethan/Documents/JetHT_2018B_processed.root","/home/ethan/Documents/JetHT_2018C_processed.root","/home/ethan/Documents/JetHT_2018D_processed.root"};
   
    for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
    {

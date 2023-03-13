@@ -84,7 +84,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    TH1I* h_SJ_nAK4_200_DT = new TH1I("h_SJ_nAK4_200_DT","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Signal Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
    TH1F* h_SJ_mass_DT  = new TH1F("h_SJ_mass_DT","SuperJet Mass (Signal Region) ;Mass [GeV]; Events / 125 GeV",40,0.,5000);
    TH1F* h_disuperjet_mass_DT  = new TH1F("h_disuperjet_mass_DT","diSuperJet Mass (Signal Region);Mass [GeV]; Events / / 400 GeV",25,0.,10000);
-   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F("h_MSJ_mass_vs_MdSJ_DT","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
+   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F("h_MSJ_mass_vs_MdSJ_DT","Double Tagged Superjet mass vs diSuperjet mass (Signal Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
 
    TH1I* h_nLooseBTags = new TH1I("h_nLooseBTags","Number of Loosely b-tagged AK4 Jets; Events",10,-0.5,9.5);
    TH1I* h_nMidBTags = new TH1I("h_nMidBTags","Number of Mediumly b-tagged AK4 Jets; Events",10,-0.5,9.5);
@@ -234,32 +234,16 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       t1->GetEntry(i);
       
 
-      
-      if(totHT < 3500) h_totHT_All->Fill(totHT);
-
-
-      totalEvents++;
-      nEvents+= eventScaleFactor;
       h_MSJ_mass_vs_MdSJ_all->Fill(diSuperJet_mass,(superJet_mass[1]+superJet_mass[0])/2. );
 
-      //if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
-      if (totHT < 1500.) continue;
-      nHTcut+= eventScaleFactor;
-      h_totHT_All2->Fill(totHT);
-
-      if ( nfatjets < 3) continue;
-      h_totHT_All1->Fill(totHT);
-      nAK8JetCut+= eventScaleFactor;
+      if( (nfatjets < 3) || (totHT < 1500.)     ) continue;
 
       if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
       {
-         totWithNoHeavyAK8++;
          continue;
       } 
-      nHeavyAK8Cut+= eventScaleFactor;
-      h_totHT_All3->Fill(totHT);
-
       h_nAK4->Fill(nAK4);
+
 
       //int _nAK4 = 0;
       for(int iii = 0;iii< nAK4; iii++)
@@ -274,7 +258,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       {
 
          h_AK4_DeepJet_disc->Fill(AK4_DeepJet_disc[iii]);
-         //if ( (AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.)) nTightBTags++;
+         if ( (AK4_DeepJet_disc[iii] > tightDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.)) nTightBTags++;
          if ( (AK4_DeepJet_disc[iii] > medDeepCSV_DeepJet )   && (AK4_pt[iii] > 30.)) nMedBTags++;
          if ( (AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet ) && (AK4_pt[iii] > 30.)) nLooseBtags++;
          //if(abs(AK4_partonFlavour[iii])==5) nLooseBtags++;
@@ -307,17 +291,19 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
       /// control region 
-      if( nLooseBtags < 1 ) 
+      if( nTightBTags < 1 ) 
       {
 
             nNoBjets+=eventScaleFactor;
+            h_SJ_nAK4_100_CR->Fill(SJ_nAK4_100[0]);
             h_SJ_nAK4_100_CR->Fill(SJ_nAK4_100[1]);
 
             h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[0]);
             h_SJ_nAK4_200_CR->Fill(SJ_nAK4_200[1]);
 
-            h_SJ_mass_CR->Fill(superJet_mass[0]);
-            h_SJ_mass_CR->Fill(superJet_mass[1]);
+            h_SJ_mass_CR->Fill( (superJet_mass[0]+superJet_mass[1])/2.    );
+            //h_SJ_mass_CR->Fill( superJet_mass[0]    );
+            //h_SJ_mass_CR->Fill( superJet_mass[1]    );
 
             h_disuperjet_mass_CR->Fill(diSuperJet_mass);
 
@@ -355,7 +341,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       nPassPreSelection++;
 
       // signal region
-      if ( (nLooseBtags > 1)  )
+      if ( (nTightBTags > 0)  )
       {
             
          nBtagCut+=eventScaleFactor;
@@ -365,8 +351,9 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
          h_SJ_nAK4_200_DT->Fill(SJ_nAK4_200[0]);
          h_SJ_nAK4_200_DT->Fill(SJ_nAK4_200[1]);
 
-         h_SJ_mass_DT->Fill(superJet_mass[0]);
-         h_SJ_mass_DT->Fill(superJet_mass[1]);
+         h_SJ_mass_DT->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
+         //h_SJ_mass_DT->Fill(superJet_mass[0]);
+         //h_SJ_mass_DT->Fill(superJet_mass[1]);
 
 
          h_nfatjets_DT->Fill(nfatjets);
@@ -382,7 +369,6 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
          h_totHT_DT->Fill(totHT);
 
          h_disuperjet_mass_DT->Fill(diSuperJet_mass);
-
       
          //double tagging CUT BASED
          if(   (SJ_nAK4_300[0]>=2) && (SJ_mass_100[0]>400.)   )
@@ -507,6 +493,7 @@ void readTreeMCBR()
    double nDoubleTaggedCR = 0;
    double NNDoubleTag = 0;
    double nDoubleTaggedCRNN = 0;
+   std::string dataYear = "2018";
    if(includeTTBar)
    {
       double eventScaleFactors[6] = {4.289571744,0.6042726685,0.2132134533,0.06588049107,0.03616639075,0.04563489275};
@@ -539,12 +526,9 @@ void readTreeMCBR()
    {
       double eventScaleFactors[3] = {4.289571744,0.6042726685,0.2132134533};
 
-      std::vector<std::string> inFileNames = {"/home/ethan/QCD_HT1000to1500.root",
-                                        "/home/ethan/QCD_HT1500to2000.root",
-                                        "/home/ethan/QCD_HT2000toInf.root"};
-      std::vector<std::string> outFileNames = {"/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed.root",
-                                            "/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed.root",
-                                            "/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed.root" };
+      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT1000to1500_" + dataYear + ".root").c_str(),("/home/ethan/QCD_HT1500to2000_" + dataYear + ".root").c_str(), ("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
+
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed_TEST_"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii] );
