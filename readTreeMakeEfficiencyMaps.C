@@ -159,7 +159,7 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
 
 
    /*
-      TH2F *h_nLightJets = new TH2F( ("h_nLightJets_"+ dataYear).c_str() ,"total number of true light jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
+      TH2F *h_nLightJets = new TH2F( ("h_nLightJets_"+ dataYear).c_str() ,"total number of true light outFile.Write();jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
    TH2F *h_nTruebJets = new TH2F( ("h_nTruebJets"+ dataYear).c_str() ,"total number of true b jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
    TH2F *h_nTruecJets = new TH2F( ("h_nTruecJets"+ dataYear).c_str() ,"total number of true c jets; jet p_{T} [GeV];jet eta", 40,0, 2000, 24, -2.4, 2.4);
 
@@ -176,6 +176,12 @@ void doThings(std::string inFileName, std::string outFileName, std::string dataY
   TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
 
    h_effbJets->Draw("colz");
+
+
+   h_effbJets->Write();
+   h_effcJets->Write();
+   h_effLightJets->Write();
+
    c1->SaveAs("h_effbJets.png"); 
 
    outFile.Write();
@@ -227,3 +233,12 @@ void readTreeMakeEfficiencyMaps()
 
 
 }
+
+
+// 20230314
+// vetoing leptons - frank will send something about how to deal with this
+   // lepton tagging efficiencies 
+//trigger efficiency
+//no jet ID 
+// jet energy resolution + jet energy scale -- more complicated 
+// pileup weights -- simple 

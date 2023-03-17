@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import sys
-
+import ROOT
 def dirReduc(plan):
     opposite = {'NORTH': 'SOUTH', 'EAST': 'WEST', 'SOUTH': 'NORTH', 'WEST': 'EAST'}
 
