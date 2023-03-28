@@ -242,3 +242,6 @@ void readTreeMakeEfficiencyMaps()
 //no jet ID 
 // jet energy resolution + jet energy scale -- more complicated 
 // pileup weights -- simple 
+
+
+// need to get up and down uncertanties for B tag SFs

@@ -35,18 +35,25 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    int nGenBJets_AK4[100], AK4_partonFlavour[100],AK4_HadronFlavour[100];
    int SJ1_decision, SJ2_decision;
 
+   double _eventWeightPU,_puWeightDown,_puWeightUp;
+
+
    ////////////////////////////   btag SF variables //////////////////////
-   int _eventNum, _nAK4;
-   double _eventWeight, _AK4_pt[100];
+   int _eventNumBTag,_eventNumPU _nAK4;
+   double _eventWeightBTag, _AK4_pt[100];
 
    const char *_inFilename = inFileName.c_str();
    const char *_outFilename = outFileName.c_str();
-   std::string _inFilebTaggingSF = "/home/ethan/Documents/bTag_eventWeights_2018.root";
+   std::string _inFilebTaggingSF = "/home/ethan/Documents/bTag_eventWeight_2018.root";
+   std::string _inFilePUSF = "/home/ethan/Documents/bTag_eventWeight_2018.root";
+
    const char * _inFilebTaggingSFUse = _inFilebTaggingSF.c_str();
    std::cout << "Reading file: " << _inFilename << std::endl;
    TFile *f = new TFile(_inFilename);
    std::cout << "Also reading b-tag SF file: " << _inFilebTaggingSF << std::endl;
    TFile *f2 = new TFile(_inFilebTaggingSFUse);
+   TFile *f3 = new TFile(_inFilePUSF);
+
    TFile outFile(_outFilename,"RECREATE");
 
    TH2F *h_Mjet_vs_pTjet = new TH2F("h_Mjet_vs_pTjet","Jet Mass vs Jet pT; jet p_{T} [GeV];jet mass", 80,0, 4000, 50, 0, 2000);
@@ -149,10 +156,15 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    TTree *t1 = (TTree*)f->Get("skimmedTree");   //need to change this to something relevenet
    const Int_t nentries = t1->GetEntries();
 
-   TTree *t2 = (TTree*)f2->Get("T");   //need to change this to something relevenet
+   TTree *t2 = (TTree*)f2->Get("weightsBTagging");   //need to change this to something relevenet
+   TTree *t3 = (TTree*)f3->Get("weightsPU");   //need to change this to something relevenet
+
+   
    //const Int_t nentries_btagSF = t2->GetEntries();
 
    t1->AddFriend(t2);
+   t1->AddFriend(t3);
+
    //std::cout << t1->GetListOfBranches()->FindObject("AK4_partonFlavour") << std::endl;
    //t1->GetListOfBranches()->Print(); 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,10 +234,15 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
    //////////////////////btag SF variables/////////////////////
-   t1->SetBranchAddress("T._eventNum", &_eventNum); 
-   t1->SetBranchAddress("T._nAK4", &_nAK4); 
-   t1->SetBranchAddress("T._eventWeight", &_eventWeight); 
-   t1->SetBranchAddress("T._AK4_pt", _AK4_pt); 
+   t1->SetBranchAddress("weightsBTagging._eventNumBTag", &_eventNumBTag); 
+   t1->SetBranchAddress("weightsBTagging._nAK4", &_nAK4); 
+   t1->SetBranchAddress("weightsBTagging._eventWeightBTag", &_eventWeightBTag); 
+   t1->SetBranchAddress("weightsBTagging._AK4_pt", _AK4_pt); 
+
+   t1->SetBranchAddress("weightsPU._eventNumPU", &_eventNumPU); 
+   t1->SetBranchAddress("weightsPU._eventWeightPU", &_eventWeightPU); 
+   t1->SetBranchAddress("weightsPU._puWeightDown", &_puWeightDown); 
+   t1->SetBranchAddress("weightsPU._puWeightUp", _puWeightUp); 
 
 
    int totalEvents = 0;
@@ -261,22 +278,25 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       double eventWeightToUse = 1.0;
       double epsilon = 1e-8;
       int jetsMatch = 1;
-      if((eventnum == _eventNum) && (nAK4 == _nAK4) ) 
+      if((eventnum == _eventNumBTag) && (nAK4 == _nAK4) && (eventnum == _eventNumPU) ) 
       {
          for(int iii =0;iii<nAK4;iii++)
          {
             if( abs(AK4_pt[iii]-_AK4_pt[iii]) > epsilon)jetsMatch*=0;
          }
-         if(jetsMatch > 0) eventWeightToUse = _eventWeight;
+         if(jetsMatch > 0)
+         {
+            eventWeightToUse *=_eventWeightBTag;
+            eventWeightToUse *=_eventNumPU;
+         }
          else { std::cout << "bad event - AK4 jet pt does not match ... " << std::endl;}
       }  
       else
       {
-         std::cout << "something didnt match: eventnum: " << eventnum << "/" << _eventNum << " nAK4: " << nAK4 << "/" << _nAK4 << std::endl;
+         std::cout << "something didnt match: eventnums: " << eventnum << "/" << _eventNumBTag << "/" << _eventNumPU<<  " nAK4: " << nAK4 << "/" << _nAK4 << std::endl;
       }
 
       
-      eventWeightToUse = 1;  
       /////////////////////////////////////////////////////////////////////////////////
       /////////////////////////////////////////////////////////////////////////////////
 
@@ -529,6 +549,7 @@ void readTreeMCBR()
    double NNDoubleTag = 0;
    double nDoubleTaggedCRNN = 0;
    std::string dataYear = "2018";
+
    if(includeTTBar && allHTBins)
    {
       double eventScaleFactors[6] = {4.289571744,0.6042726685,0.2132134533,0.06588049107,0.03616639075,0.04563489275};
@@ -547,7 +568,7 @@ void readTreeMCBR()
                                             "/home/ethan/Documents/TTtoSemiLeptonic_processed_TEST.root" };
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii] );
+         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii],dataYear );
       }
       std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
       std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
@@ -565,7 +586,7 @@ void readTreeMCBR()
       std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_processed_TEST_NOBTSF"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_processed_TEST_NOBTSF"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_processed_TEST_NOBTSF"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii] );
+         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii],dataYear );
       }
       std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
       std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
@@ -583,7 +604,7 @@ void readTreeMCBR()
       std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_processed_TEST_NOBTSF"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii] );
+         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii],dataYear );
       }
       std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
       std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;

@@ -1,6 +1,17 @@
 #! /usr/bin/env python
+#####################################################
+#####################################################
+# calcEventWeights.py calculates BTag event weights
+# and event pileup weights for each event and stores    
+# them in eventWeight_2018.root
+# saves out weights as - 
+#       _eventWeightBTag
+# looks for JSON files in 
+#    btagging/scaleFactors/2018_UL/btagging.json.gz
+#    
 
-import ROOT
+#####################################################
+#####################################################
 from ROOT import TFile, TTree, gROOT, addressof
 import sys
 import numpy as np
@@ -9,23 +20,33 @@ import correctionlib
 from math import floor, isnan
 from array import array
 
-def splitArgs(arg):
-	argvSplit = []
-	for par in arg:
-		par = par.split(",")
-		argvSplit.extend(par)
-	return argvSplit
-def calcEventWeights(year, dataset): 
+effMapFileName = "QCD_HT2000toInf_efficiencyMap_2018.root"
+inFileEffMap = ROOT.TFile.Open ( effMapFileName , "READ" )
+effMap_light = inFileEffMap.Get ("h_effLightJets")
+effMap_c = inFileEffMap.Get ("h_effcJets")
+effMap_b = inFileEffMap.Get ("h_effbJets")
 
-	if year == "2015":
-		pathString = "2016preVFP"
-	elif year == "2016":
-		pathString == "2016postVFP"
+def getEffMapValue(pt,eta,flavour):
+	binx = floor(pt/50.)   #pt
+	biny = floor(5.0*(eta+2.4))  #eta
+	if flavour == 0:
+		return effMap_light.GetBinContent(binx,biny)
+	elif flavour == 4:
+		return effMap_c.GetBinContent(binx,biny)
+	elif flavour == 5:
+		return effMap_b.GetBinContent(binx,biny)
 	else:
-		pathString = year
-	inFileName = "QCD_%s_SKIMMED_TEST_%s.root"%(dataset,year)
+		print("invalid flavour!:", flavour)
+		return -999
+
+##############################################################################
+#MAIN
+##############################################################################
+def main(argv): 
+
+	inFileName = "QCD_HT2000toInf_2018.root"
 	inFile = ROOT.TFile.Open ( inFileName , "READ" )
-	tree = inFile.Get( "skimmedTree" )
+	tree = inFile.Get( "clusteringAnalyzerBR/tree" )
 
 
 	h_SFs = ROOT.TH1D("h_SFs","b-tagging SFs", 100, 0.5 ,1.25)
@@ -33,25 +54,20 @@ def calcEventWeights(year, dataset):
 	h_SFs_truec = ROOT.TH1D("h_SFs_truec","b-tagging SFs for true c jets", 100, 0.5 ,1.5)
 	h_SFs_truelight = ROOT.TH1D("h_SFs_truelight","b-tagging SFs for true light", 100, 0.5 ,1.5)
 
-	btvjson = correctionlib.CorrectionSet.from_file("btagging/scaleFactors/%s_UL/btagging.json.gz"%pathString)
+	btvjson = correctionlib.CorrectionSet.from_file("btagging/scaleFactors/2018_UL/btagging.json.gz")
 
-	f = TFile( 'bTag_eventWeight_%s.root'%year, 'RECREATE' )
+	f = TFile( 'eventWeight_2018.root', 'RECREATE' )
 	#outText = Open("bTagSFs")
 	nMax = 30
-	_eventNum     	 = array( 'i', [ 0 ] )
+	_eventNum    = array( 'i', [ 0 ] )
 	_eventWeightBTag = array( 'd', [ 0 ] )
-	_eventWeightUpBTag = array( 'd', [ 0 ] )
-	_eventWeightDownBTag = array( 'd', [ 0 ] )
-	_nAK4        	 = array( 'i', [ 0 ] )
-	_AK4_pt      	 = array( 'd', nMax*[ 0 ] )
+	_nAK4        = array( 'i', [ 0 ] )
+	_AK4_pt      = array( 'd', nMax*[ 0 ] )
 
-	treeOut = TTree( 'weightsBTagging', 'event weight and some AK4 jet pt for each event' )
+	treeOut = TTree( 'T', 'event weight and some AK4 jet pt for each event' )
 	treeOut.Branch( '_eventNum',    _eventNum ,     '_eventNum/I' )
 	treeOut.Branch( '_nAK4',        _nAK4 ,         '_nAK4/I' )
 	treeOut.Branch( '_eventWeightBTag', _eventWeightBTag ,  '_eventWeightBTag/D' )
-	treeOut.Branch( '_eventWeightUpBTag', _eventWeightUpBTag ,  '_eventWeightUpBTag/D' )
-	treeOut.Branch( '_eventWeightDownBTag', _eventWeightDownBTag ,  '_eventWeightDownBTag/D' )
-
 	treeOut.Branch( '_AK4_pt',      _AK4_pt ,       '_AK4_pt[_nAK4]t/D' )
 
 
@@ -103,26 +119,9 @@ def calcEventWeights(year, dataset):
 		bc_jets    = np.where(jet_flav != 0)
 
 		#### calculate the efficiencies
-
-		effMapFileName = "QCD_%s_efficiencyMap_%s.root"%(dataset,year)
-		inFileEffMap = ROOT.TFile.Open ( effMapFileName , "READ" )
-		effMap_light = inFileEffMap.Get ("h_effLightJets")
-		effMap_c     = inFileEffMap.Get("h_effcJets")
-		effMap_b     = inFileEffMap.Get("h_effbJets")
 		jetEfficiency = []
 		for iii in range(0,nAK4):
-			binx = floor(AK4_pt_np[iii]/50.)   #pt
-			biny = floor(5.0*(AK4_eta_np[iii]+2.4))  #eta
-			tempFlavour = AK4_hadronFlavour_np[iii]
-			if tempFlavour == 0:
-				jetEfficiency.append(effMap_light.GetBinContent(binx,biny))
-			elif tempFlavour == 4:
-				jetEfficiency.append(effMap_c.GetBinContent(binx,biny))
-			elif tempFlavour == 5:
-				jetEfficiency.append(effMap_b.GetBinContent(binx,biny))
-			else:
-				print("invalid flavour!:", tempFlavour)
-				return -999
+			jetEfficiency.append( getEffMapValue(AK4_pt_np[iii],AK4_eta_np[iii],AK4_hadronFlavour_np[iii] ) )
 
 		#### split efficiencies up into bc and light jets
 		jetEfficiency_np = np.array(jetEfficiency)
@@ -284,38 +283,5 @@ def calcEventWeights(year, dataset):
 
 	f.Write("",TFile.kOverwrite)
 	f.Close()
-
-
-##############################################################################
-#MAIN
-##############################################################################
-def main(argv):
-	argvSplit = splitArgs(argv)
-
-	yearRef = ['2015','2016','2017','2018'] 
-	datasetRef = ['HT1000to1500','HT1500to2000','HT2000toInf']
-	if '--help' in argv or '-h' in argv or '--h' in argv:
-		print("--------------------------------------------------------------------------------------------")
-		print("-- Formatting for input: python calcBTaggingWeights.py 2016,2017 HT2000toInf,HT1500to2000 --")
-		print("--                         Other options: allYears, allDatasets                           --")
-		print("--                         2016 = 2016postVFP, 2016 = 2016preVFP                          --")
-	if 'allYears' in argv:
-		years = yearRef
-	else:
-		years = [ year for year in yearRef if year in argvSplit]
-	if 'allDatasets' in argv:
-		datasets = datasetRef
-	else:
-		datasets = [dataset for dataset in datasetRef if dataset in argvSplit]
-
-	if (( len(years) + len(datasets) ) < 1):
-		print("wrong inputs: enter the data years you want (separated by a comma, allYears for all) and datasets you want (allDatasets for all)")
-		return
-	for year in years:
-		for dataset in datasets:
-			print("Calculating btagging event weights for %s %s."%(year,dataset))
-			calcEventWeights(year,dataset)
-			print("Finished with %s %s."%(year,dataset))
-#how do we calculate the up/down event weight thing??
 if __name__ == "__main__":
     main(sys.argv[1:])
