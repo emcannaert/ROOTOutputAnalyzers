@@ -1,0 +1,59 @@
+superjets -> what form do we want these as? 
+	probably COM frame for the training to be universal
+
+
+variables
+
+
+SJ_mass
+SJ_mass_50
+SJ_mass_100
+SJ_mass_200
+
+softdrop mass?
+
+
+bjet percent of particles for each reclustered AK4 jet
+
+jet1-4 energy
+jet1-4 mass
+
+particle boosts? probably not linearly independent
+
+AK4 theta12   -> better to use cos?
+AK4 theta13
+AK4 theta14
+AK4 theta23
+AK4 theta24
+AK4 theta34
+
+AK4 m12
+AK4 m13
+AK4 m14
+AK4 m23
+AK4 m24
+AK4 m34
+
+AK4 m123
+AK4 m124
+AK4 m134
+AK4 m234
+
+AK4 m1234
+
+jets 1234 boosted information?
+	- ndaughters
+	- subjettiness
+	- BES variables
+	-
+
+
+
+BES variables 
+	- thrust
+	- sphericity
+	-asymmetry
+	-isotropy
+	-aplanarity
+	-FW moments 1-4
+	- ....

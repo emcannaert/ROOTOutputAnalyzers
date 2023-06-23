@@ -1,0 +1,42 @@
+
+1. Chech the LV status of the modules in the detconfig
+If module is not on:
+Switch off the DCDC connected
+Turn on the LV
+For each DCDC:
+Turn on + program the modules
+
+To check LV status
+a) Use `theLowVoltageMap_` to get module names and pw
+b) Use one for loop to obtain DCDCs status per module ; then save in some datastructure A (tbc)
+c) Use one loop to do the same but the power ; save datastructure B
+d) merge A+B (probably need to find a fast way to do this)
+
+Then once we have that we can start working on setting to the status we want; while updating the final datastructure of the changes.
+
+Two connection structures would be needed:
+module <-> PowerSupply
+module <-> DCDC
+and two status maps
+LVStatus(PowerSupply)
+DCDCStatus(DCDC)
+
+Step1:
+  As Previous comment says,  we need two structures:
+
+    map/list<module,PowerSupply>
+    map/list<module, DCDC>
+
+Step2:
+  For module to be ON, both LV and DCDC should be ON. So next:
+
+    turn LV off per power supply in parallel (if not off already)
+    turn off DCDCs per power supply in parallel (if enabled)
+    Turn on LV per power supply in parallel
+    DCDCs enabled per power supply in parallel; this should reduce (if not completely remove posibility of trips)
+
+Step3: (...tbc...)
+
+
+
+mB7rw0Lx+

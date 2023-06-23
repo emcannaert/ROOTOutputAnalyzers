@@ -1,0 +1,104 @@
+need to run algorithm on HT dataset
+
+do event selection 
+
+- HT > 1500 GeV
+- DON'T do the strict AK8 jet mass -> maybe have require 2 high pT jets? or something to do with the dijet mass
+
+
+
+- anti-tag first AK8 jet
+- how often is second AK8 jet tagged? (per mass bin)
+
+
+- counter -> array number for each mass bin -> 100 GeV per mass bin? -> total number of "mistagged" AK8 jet per mass bin
+- counter -> array, number for each mass bin -> total number of events that are anti-tagged
+
+
+- save this information in a text file somewhere 
+
+--------------------------------------------------------------
+
+-open data again
+- tag first superjet
+- apply mistagging efficieny to first superjet
+	-Demand that it be tagged, then apply the mistagging efficiency from 1) above as a function of the near SJ momentum, p_SJ
+-Calculate the disuperjet mass from assuming the far side four-momentum equals the near side four-momentum
+
+
+
+-require near superjet be tagged, but far superjet be not tagged 
+	- fake far superjet using mistagging rate and assume the 4 -momentum is opposite in direction
+
+root://cmsxrootd-site.fnal.gov/
+
+
+crab status -d crab_projects/crab_crab_JetHT2018A_0001
+crab status -d crab_projects/crab_crab_JetHT2018B_0001
+crab status -d crab_projects/crab_crab_JetHT2018C_0001
+crab status -d crab_projects/crab_crab_JetHT2018D_0001
+
+
+
+hadd JetHT2018A_combined.root `xrdfsls -u /store/user/ecannaer/JetHT/crab_JetHT2018A/220509_075526/0000 | grep '\.root'`
+hadd JetHT2018B_combined.root `xrdfsls -u /store/user/ecannaer/JetHT/crab_JetHT2018B/220509_075537/0000 | grep '\.root'`
+hadd JetHT2018C_combined.root `xrdfsls -u /store/user/ecannaer/JetHT/crab_JetHT2018C/220509_075612/0000 | grep '\.root'`
+hadd JetHT2018D_combined.root `xrdfsls -u /store/user/ecannaer/JetHT/crab_JetHT2018D/220509_075626/0000 | grep '\.root'`
+
+scp -r cannaert@cmslpc-sl7.fnal.gov:/uscms_data/d3/cannaert/analysis/CMSSW_10_6_20/src/analyzers/analyzers/src/JetHT2018A_combined.root .
+scp -r cannaert@cmslpc-sl7.fnal.gov:/uscms_data/d3/cannaert/analysis/CMSSW_10_6_20/src/analyzers/analyzers/src/JetHT2018B_combined.root .
+scp -r cannaert@cmslpc-sl7.fnal.gov:/uscms_data/d3/cannaert/analysis/CMSSW_10_6_20/src/analyzers/analyzers/src/JetHT2018C_combined.root .
+scp -r cannaert@cmslpc-sl7.fnal.gov:/uscms_data/d3/cannaert/analysis/CMSSW_10_6_20/src/analyzers/analyzers/src/JetHT2018D_combined.root .
+
+
+
+look at antitagged jets -> are there similar numbers of tagged / anti-tagged 
+
+
+big to-do list
+
+combine together all mass points of 
+
+-------------NN stuff-----------------
+statistcs for NN   - HT flattening
+	- what to do about signal statistics ...
+	- need to add together various SM + SUSY TTbar decays to get that to work
+	- what do we do about QCD? 
+		- what are options of SUSY -> QCD
+
+	- between HT 1.5 TeV and 8 TeV ********
+NN approach - test single NN trained with many different masses 
+	- how well does this work
+	- would make flattening easier because we could add together different mass points to flatten HT distribution	
+
+
+Get NN to work in analyzer
+	- how well does this pick out our signal MC?
+	- should be similar performance to training/testing
+
+-------------Background analysis--------------
+Understand background estimation
+	- compare MC and data yields
+		-do I truly only get ~600 data events after pre-selection
+	- what is correlation between superjets
+	- is data-driven background estimate possible without unblinding
+		- how do we deal with fact that we might have no statistics in high Suu/chi mass region
+	- how can we drop various pre-selection cuts to improve efficiency
+		- this might actually help us with the background estimate 
+	-what does Res->TTbar->bbqqqq analysis do?
+	- what does EXO paper do for their estimation?
+
+
+--------------Misc-----------------------
+Add in CA sorting method for splitting up event 
+	- this doesn't seem to difficult
+
+
+
+cSystemController.fFEDInterface    -> only pointer being referenced
+
+
+-submited crab jobs for all different mass points -> will add these together and use these for training
+- can you add together different types of QCD dataset to try and get enough statistics?
+- TTtoHadronic, TTJets, Zprime -> TTbar, ...?
+- train Wb, Ht, Zt for combined mass points

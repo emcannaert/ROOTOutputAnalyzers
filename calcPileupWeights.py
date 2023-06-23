@@ -34,7 +34,7 @@ def calcEventWeights(year,dataset):
 	h_SFs = ROOT.TH1D("h_SFs","PU reweighting SFs", 100, 0.5 ,1.25)
 	PUjson = correctionlib.CorrectionSet.from_file("pileup/LUM/%s_UL/puWeights.json.gz"%pathString)
 
-	f = TFile( 'bTag_eventWeight_%s.root'%year, 'RECREATE' )
+	f = TFile( 'pileup_eventWeight_%s.root'%year, 'RECREATE' )
 
 	_eventNum      = array( 'i', [ 0 ] )
 	_eventWeightPU = array( 'd', [ 0 ] )
@@ -65,9 +65,9 @@ def calcEventWeights(year,dataset):
 			continue 
 		######### set tree variables ##########
 		_eventNum[0] = eventNum
-		_puWeightDown       = PUjson[lumiTag[year]].evaluate(ntrueInt,"down") 
-		_eventWeightPU      = PUjson[lumiTag[year]].evaluate(ntrueInt,"nominal") 
-		_puWeightUp         = PUjson[lumiTag[year]].evaluate(ntrueInt,"up") 
+		_puWeightDown[0]       = PUjson[lumiTag[year]].evaluate(ntrueInt,"down") 
+		_eventWeightPU[0]      = PUjson[lumiTag[year]].evaluate(ntrueInt,"nominal") 
+		_puWeightUp[0]         = PUjson[lumiTag[year]].evaluate(ntrueInt,"up") 
 		#######################################
 		eventNum+=1
 		treeOut.Fill()
@@ -117,3 +117,5 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+

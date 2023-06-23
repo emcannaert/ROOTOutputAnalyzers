@@ -1,0 +1,324 @@
+# - - - - - - - - - - - - LINUX  - - - - - - - - - - - - - - - - - -
+Host cmslpc*.fnal.gov
+    GSSAPIAuthentication yes
+    GSSAPIDelegateCredentials yes
+    GSSAPITrustDNS yes
+# - - - - - - - - - - - - LINUX additional - - - - - - - - - - - - -
+Host cmslpc*.fnal.gov
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+# - - - - - - - - - - - - LINUX additional - - - - - - - - - - - - -
+HOST cmslpc*.fnal.gov
+           GSSAPIAuthentication yes
+           GSSAPIDelegateCredentials yes
+           UserKnownHostsFile /dev/null
+           StrictHostKeyChecking no
+Host cmslpc*fnal.gov
+   ForwardX11 yes 
+   ForwardX11Trusted yes 
+   ForwardAgent yes 
+
+
+# - - - - - - - - stuff I stole from Troy - - - - - - - - - - - - - - - - - - - 
+Host lxplus lxplus.cern.ch
+	HostName lxplus.cern.ch
+	# Specify the remote username if different from your local one
+	User ecannaer
+	Compression yes
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	ForwardX11 yes
+	ForwardX11Trusted yes
+	# In case there is kerberos configured locally
+	# NOTE: option GSSAPITrustDns may no longer be available in releases of SSH on
+	#       more recent Mac OSX versions, where you should simply comment it out
+	GSSAPITrustDns yes
+	GSSAPIAuthentication yes
+	GSSAPIDelegateCredentials yes
+    
+    #This is for webpage forwarding that are only reachable from inside CERN:
+    DynamicForward 1090
+
+Host lxplus6.cern.ch
+	# Specify the remote username if different from your local one
+	User ecannaer
+	Compression yes
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	ForwardX11 yes
+	ForwardX11Trusted yes
+	# In case there is kerberos configured locally
+	# NOTE: option GSSAPITrustDns may no longer be available in releases of SSH on
+	#       more recent Mac OSX versions, where you should simply comment it out
+	GSSAPITrustDns yes
+	GSSAPIAuthentication yes
+	GSSAPIDelegateCredentials yes
+    
+    #This is for webpage forwarding that are only reachable from inside CERN:
+    DynamicForward 1090
+
+######################
+# CMS Network Access #
+######################
+
+Host cmsusr cmsusr* cmsusr*.cms
+	# Specify the remote username if different from your local one
+	User ecannaer
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	ForwardX11 yes
+	#ForwardX11Trusted no
+
+	# Go through lxplus so that it works from wherever you are
+	ProxyCommand ssh lxplus nc %h 22
+#	ProxyCommand ssh ecannaer@lxplus.cern.ch /usr/bin/nc %h %p 2> /dev/null
+
+	# Setup a SOCKS5 proxy on local port 1080 so that you can easily browse internal CMS web sites
+	DynamicForward 1080
+
+	# Setup port forwarding for the General X2GO server (point your X2GO client to local port 6122 for x2go01)
+	LocalForward 6122 x2go01:22
+	# Same as above for x2go02
+	LocalForward 6222 x2go02:22
+	# Same as above for cc7x2go03
+	LocalForward 6322 cc7x2go03:22
+	# Same as above for cc7x2go04
+	LocalForward 6422 cc7x2go04:22
+	# Same as above for x2go05
+	LocalForward 6522 x2go05:22
+	# Same as above for x2go06
+	LocalForward 6622 x2go06:22
+
+	# DAQ OnCall settings (DB and daqweb)
+	# For connection to the DB, from outside use the tnsnames.ora file provided where this file was provided
+	LocalForward 10121 cmsonr1-v.cms:10121
+	LocalForward 10122 cmsonr2-v.cms:10121
+	LocalForward 10123 cmsonr3-v.cms:10121
+	LocalForward 10124 cmsonr4-v.cms:10121
+	LocalForward 10125 cmsintr1-v.cms:10121
+	LocalForward 10126 cmsintr2-v.cms:10121
+	LocalForward 45679 cmsdaqweb.cms:45679
+	# DAQ OnCall X2GO servers
+	# For x2godaq1
+	LocalForward 7122 x2godaq1:22
+	# For x2godaq2 or x2gosysadmin
+	LocalForward 7222 x2godaq2:22
+
+	# Windows remote desktop forwarding
+	#LocalForward 5001 mywindows_machine:3389
+	# VNC port forwarding (add as many as you want)
+	#LocalForward 5902 mymaccomputer:5900
+	#Extra port to use the apple remote desktop
+	#LocalForward 3283 mymaccomputer:3283
+	#stuff for rCMS
+	LocalForward 10121 cmsonr1-v:10121
+	LocalForward 10122 cmsonr2-v:10121
+	LocalForward 10123 cmsonr3-v:10121
+	LocalForward 10124 cmsonr4-v:10121
+
+# Direct connection to cmsnx, any .cms machine, any IP of .cms
+Host x2go* cc7x2go* *.cms 10.176.*.*
+	# Specify the remote username if different from your local one
+	#User remote_username
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	#ForwardX11 yes
+	#ForwardX11Trusted no
+
+	# Go through the cmsusr connection
+	ProxyCommand ssh cmsusr nc %h 22
+
+
+######################
+# 904 Network Access #
+######################
+
+Host cms904usr
+	# Specify the remote username if different from your local one
+	User ecannaer
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	#ForwardX11 yes
+	#ForwardX11Trusted no
+
+	# Go through lxplus so that it works from wherever you are
+	ProxyCommand ssh lxplus nc %h 22
+
+	# Setup a SOCKS5 proxy on local port 1081 so that you can easily browse internal 904 web sites
+	DynamicForward 1081
+
+	# Setup port forwarding for the NX server (point your NX client to local port 5022 for cms904nx0)
+	LocalForward 5022 cms904nx0:22
+	# Same as above for cms904nx1
+	#LocalForward 5122 cms904nx1:22
+	# Same as above for cms904nx2
+	#LocalForward 5222 cms904nx2:22
+
+	# Setup port forwarding for the General X2GO server (point your X2GO client to local port 7122 for cms904x2go)
+	LocalForward 7122 cms904x2go:22
+
+	# DAQ OnCall settings
+
+	# Windows remote desktop forwarding
+	#LocalForward 5001 mywindows_machine:3389
+	# VNC port forwarding (add as many as you want)
+	#LocalForward 5902 mymaccomputer:5900
+	#Extra port to use the apple remote desktop
+	#LocalForward 3283 mymaccomputer:3283
+
+
+# Direct connection to cms904nx, any .cms904 machine, any IP of .cms904
+Host cms904nx* cms904x2go* *.cms904 10.192.*.*
+	# Specify the remote username if different from your local one
+	#User remote_username
+	# Use SSHv2 only
+	Protocol 2
+	# Forward you SSH key agent so that it can be used on further hops
+	ForwardAgent yes
+	# For X11
+	#ForwardX11 yes
+	#ForwardX11Trusted no
+
+	# Go through the cms904usr connection
+	ProxyCommand ssh cms904usr nc %h 22
+
+# deactivate multiplexing because of a possible incompatibility with svn
+Host svn.cern.ch
+	ControlMaster no
+	# Specify the remote username if different from your local one
+	#User remote_username
+	# Use SSHv2 only
+	Protocol 2
+
+TCPKeepAlive no
+ServerAliveInterval 120
+
+#Host *
+#    ControlMaster auto
+#    ControlPath ~/.ssh/sockets/%p-%h-%r
+
+Host xdaqtest
+    Hostname cms-pix-xdaqtest
+
+Host rcms
+    Hostname cmsrc-pixel
+
+Host rcmsdev
+    Hostname cmsrc-pixeldev
+
+Host rcmsplayold
+    Hostname x2go01
+
+Host rcmsplay
+    Hostname cc7x2go01
+
+Host cleanbpix
+    Hostname cmspixel2
+    User cmspixel
+
+Host repo
+    Hostname repo.gavagai.nl
+    User hg
+#
+# CRATE-1: s1g03-­45 FEDs 1200-­1209 (1211) BpI up
+Host rcms
+    Hostname cmsrc-pixeldev.cms
+Host supervisor
+    Hostname srv-s2b18-31-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-1: s1g03-­45 FEDs 1200-­1209 (1211) BpI up
+Host bpix1
+    Hostname srv-s2b18-37-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-2: s1g03-36 FEDs 1212-­1221 (1223) BpO up
+Host bpix2
+    Hostname srv-s2b18-34-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-3: s1g03­27 FEDs 1224-­1233 (1235) BpI down
+Host bpix3
+    Hostname srv-s2b18-33-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-4: s1g03-­36 FEDs 1212-­1221 (1223) BpO down
+Host bpix4
+    Hostname srv-s2b18-32-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-5: s1g04-45 FEDs 1248-­1257 (1259) BmI up
+Host bpix5
+    Hostname srv-s2b18-41-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-6: s1g04-36 FEDs 1260-­1269 (1271) BmO up
+Host bpix6
+    Hostname srv-s2b18-40-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-7: s1g04-27 FEDs 1272--1281 (1283) BmI down
+Host bpix7
+    Hostname srv-s2b18-39-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-8: s1g04-18 FEDs 1284-­1293 (1295) BmO down
+Host bpix8
+    Hostname srv-s2b18-38-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+
+# CRATE-9: s1g01-45 FEDs 1296-1302 BpI
+Host fpix9
+    Hostname srv-s2b18-31-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-10: s1g01-36 FEDs 1308-1314 BpO
+Host fpix10
+    Hostname srv-s2b18-30-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-11: s1g01-27 FEDs 1320-1326 BmI
+Host fpix11
+    Hostname srv-s2b18-29-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+# CRATE-12: s1g01-18 FEDs 1332-1338 BmO
+Host fpix12
+    Hostname srv-s2b18-28-01
+    ForwardX11 yes
+    ForwardX11Trusted yes
+Host cleanroom
+    Hostname srv-c2d11-08-01
+    User jsonneve
+
+Host bpixtest
+    Hostname blancanieves
+    User bpix
+
+Host pixserv
+    Hostname srv-c2f38-15-01
+
+#Host tom
+#  HostName tom.cms
+#  User ecannaer
+#  ProxyCommand ssh cmsusr /usr/bin/nc %h %p 2> /dev/null
+
+# Deze moet onderaan blijven. Niets hieronder zetten.
+Host *^*
+    ProxyCommand ssh-chain %h %p

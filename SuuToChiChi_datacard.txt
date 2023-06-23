@@ -1,0 +1,17 @@
+max    1     number of categories
+jmax   2     number of samples minus one
+kmax   *     number of nuisance parameters
+-------------------------------------------------------------------------------
+shapes *       * obs_data.root h_diSuperJet_mass
+shapes signal  * ClusteringAlgorithm_Suu4TeV_chi1p5TeV_ALLDECAY_processed.root h_diSuperJet_mass
+shapes TTtoHad * clustAlgBR_ttbar_processed_.root h_diSuperJet_mass
+shapes QCD     * combined_QCD.root h_diSuperJet_mass
+-------------------------------------------------------------------------------
+bin                                            SuutoChiChi
+observation                                   265.929046995
+-------------------------------------------------------------------------------
+bin                                SuutoChiChi  SuutoChiChi    SuutoChiChi
+process                                 0            1               2
+process                              signal         QCD           TTtoHad
+rate                                110.976    116.464546995       38.38
+-------------------------------------------------------------------------------

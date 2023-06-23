@@ -1,0 +1,20 @@
+
+
+
+
+
+TO DO:
+
+- PFHT1050 trigger has some different name for 2016, need to find what this is, for now I have just removed this
+
+- jet energy corrections
+
+- b tagging scale factors (method 1)
+
+- jet energy resolution smearing 
+
+- implement recommended IDs for leptons for appropriate years
+
+- implement recommended IDs for jets for appropriate years
+
+- trigger efficiency corrections for each year

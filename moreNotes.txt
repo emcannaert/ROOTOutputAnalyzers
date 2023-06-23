@@ -1,0 +1,46 @@
+
+
+
+# object review questions
+# ask MC contacts to accept in github branch
+# do more with this control region - can I clean it up so there is less signal contamination
+# look at muti's script and try to see what it's doing
+
+
+
+# difference in b-tagging between control region and signal region?? 
+	- more bjets causes higher SJ masses?
+	- is this interfering with some specific process? 
+
+# maybe raise pT requirement for b-tagged AK4 jets
+	# 
+# look at AK8 jets??
+
+
+
+clustAlg_QCD_HT1500to2000_partGeo_bdisc_0002
+
+
+
+
+
+
+mumue_2016_CR2_600 slide 92 still bad and slide 123
+cms pileup 2017
+met_uncl2017 slide 100
+cms pileup 2018 slide 105
+
+
+
+stuck in a situation because on in the (btag_loose < 2 and btag_med < 1) region do the SJ, diSJ, and SJ substructure plots match in QCD, but in signal this would give signficant signal contamination in control region 
+
+cut out b-jets => gives many fewer events in high-mass disuperjet events, SJ masses, etc. ... 
+	- increasing the pT requirement of bjets seems to only make it worse ...
+
+
+
+
+GIT
+
+git commit -m "updated SuuToChiChi_FullyHadronic directory to have just template and script"
+git pull origin SuuToChiChi_FullyHadronic

@@ -1,0 +1,3 @@
+use cambridge achen for jet reclustering
+
+look at balancing the momentum in com frame with chi 2

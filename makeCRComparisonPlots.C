@@ -30,12 +30,12 @@ void makeCRComparisonPlots()
   double h_Suu8TeV_chi1TeV_SF = 2.17E-02;
 
   bool includeTTBar = false;
+  bool includeAllHTBins = false;
   //double h_TTJets2500toInf_SF  = 0.00008408965681;
 
   std::cout << "Open Files" << std::endl;
-  TFile *f1 = new TFile("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed.root");   //need to add these two together
-  TFile *f2 = new TFile("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed.root");
-  TFile *f3 = new TFile("/home/ethan/Documents/QCD_HT2000toInf_combined_cutbased_processed.root"); 
+
+  TFile *f3 = new TFile("/home/ethan/Documents/QCD_HT2000toInf_processed_TEST_NOBTSF2018.root"); 
 
 /*
    TH1F* h_AK8_jet_mass_DT  = new TH1F("h_AK8_jet_mass_DT","AK8 Jet Mass (DT region);Mass [GeV]; Events / 30 5GeV",50,0.,1500);
@@ -53,57 +53,11 @@ void makeCRComparisonPlots()
    TH1I* h_nAK4_DT = new TH1I("h_nAK4_DT","Number of AK4 Jets (E_{T} > 30 GeV per Event ;nAK8 Jets; Events",30,-0.5,29.5);
    TH1I* h_nAK4_CR = new TH1I("h_nAK4_CR","Number of AK4 Jets (E_{T} > 30 GeV per Event ;nAK8 Jets; Events",30,-0.5,29.5);
 */
+
   
   //create histogramas for each of the different plots for different HT levels, scale histograms, add together histograms, normalize, do division/ comparison
   std::cout << "Get histograms" << std::endl;
-  ///////////////////////////////1000to1500//////////////////////////////////
-  TH1I *h_SJ_nAK4_100_CR_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_100_CR");
-  TH1I *h_SJ_nAK4_200_CR_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_200_CR");
-  TH1F *h_SJ_mass_CR_HT1000to1500 =          (TH1F*)f1->Get("h_SJ_mass_CR");
-  TH1F *h_disuperjet_mass_CR_HT1000to1500 =  (TH1F*)f1->Get("h_disuperjet_mass_CR");
-  TH2F *h_MSJ_mass_vs_MdSJ_CR_HT1000to1500 = (TH2F*)f1->Get("h_MSJ_mass_vs_MdSJ_CR");
 
-  TH1I *h_SJ_nAK4_100_DT_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_100_DT");
-  TH1I *h_SJ_nAK4_200_DT_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_200_DT");
-  TH1F *h_SJ_mass_DT_HT1000to1500 =          (TH1F*)f1->Get("h_SJ_mass_DT");
-  TH1F *h_disuperjet_mass_DT_HT1000to1500 =  (TH1F*)f1->Get("h_disuperjet_mass_DT");
-  TH2F *h_MSJ_mass_vs_MdSJ_DT_HT1000to1500 = (TH2F*)f1->Get("h_MSJ_mass_vs_MdSJ_DT");
-
-  TH1F* h_AK8_jet_mass_QCD_HT1000to1500_CR    =      (TH1F*)f1->Get("h_AK8_jet_mass_CR");
-  TH1F* h_AK4_jet_mass_QCD_HT1000to1500_CR    =      (TH1F*)f1->Get("h_AK4_jet_mass_CR");
-  TH1F* h_totHT_QCD_HT1000to1500_CR           =      (TH1F*)f1->Get("h_totHT_CR");
-  TH1I* h_nfatjets_QCD_HT1000to1500_CR        =      (TH1I*)f1->Get("h_nfatjets_CR");
-  TH1I* h_nAK4_QCD_HT1000to1500_CR            =      (TH1I*)f1->Get("h_nAK4_CR");
-
-  TH1F* h_AK8_jet_mass_QCD_HT1000to1500_DT    =      (TH1F*)f1->Get("h_AK8_jet_mass_DT");
-  TH1F* h_AK4_jet_mass_QCD_HT1000to1500_DT    =      (TH1F*)f1->Get("h_AK4_jet_mass_DT");
-  TH1F* h_totHT_QCD_HT1000to1500_DT           =      (TH1F*)f1->Get("h_totHT_DT");
-  TH1I* h_nfatjets_QCD_HT1000to1500_DT        =      (TH1I*)f1->Get("h_nfatjets_DT");
-  TH1I* h_nAK4_QCD_HT1000to1500_DT            =      (TH1I*)f1->Get("h_nAK4_DT");
-////////////////////////////////////// 1500to2000 /////////////////////////////////////////
-  TH1I *h_SJ_nAK4_100_CR_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_100_CR");
-  TH1I *h_SJ_nAK4_200_CR_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_200_CR");
-  TH1F *h_SJ_mass_CR_HT1500to2000 =          (TH1F*)f2->Get("h_SJ_mass_CR");
-  TH1F *h_disuperjet_mass_CR_HT1500to2000 =  (TH1F*)f2->Get("h_disuperjet_mass_CR");
-  TH2F *h_MSJ_mass_vs_MdSJ_CR_HT1500to2000 = (TH2F*)f2->Get("h_MSJ_mass_vs_MdSJ_CR");
-
-  TH1I *h_SJ_nAK4_100_DT_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_100_DT");
-  TH1I *h_SJ_nAK4_200_DT_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_200_DT");
-  TH1F *h_SJ_mass_DT_HT1500to2000 =          (TH1F*)f2->Get("h_SJ_mass_DT");
-  TH1F *h_disuperjet_mass_DT_HT1500to2000 =  (TH1F*)f2->Get("h_disuperjet_mass_DT");
-  TH2F *h_MSJ_mass_vs_MdSJ_DT_HT1500to2000 = (TH2F*)f2->Get("h_MSJ_mass_vs_MdSJ_DT");
-
-  TH1F* h_AK8_jet_mass_QCD_HT1500to2000_CR    =      (TH1F*)f2->Get("h_AK8_jet_mass_CR");
-  TH1F* h_AK4_jet_mass_QCD_HT1500to2000_CR    =      (TH1F*)f2->Get("h_AK4_jet_mass_CR");
-  TH1F* h_totHT_QCD_HT1500to2000_CR           =      (TH1F*)f2->Get("h_totHT_CR");
-  TH1I* h_nfatjets_QCD_HT1500to2000_CR        =      (TH1I*)f2->Get("h_nfatjets_CR");
-  TH1I* h_nAK4_QCD_HT1500to2000_CR            =      (TH1I*)f2->Get("h_nAK4_CR");
-
-  TH1F* h_AK8_jet_mass_QCD_HT1500to2000_DT    =      (TH1F*)f2->Get("h_AK8_jet_mass_DT");
-  TH1F* h_AK4_jet_mass_QCD_HT1500to2000_DT    =      (TH1F*)f2->Get("h_AK4_jet_mass_DT");
-  TH1F* h_totHT_QCD_HT1500to2000_DT           =      (TH1F*)f2->Get("h_totHT_DT");
-  TH1I* h_nfatjets_QCD_HT1500to2000_DT        =      (TH1I*)f2->Get("h_nfatjets_DT");
-  TH1I* h_nAK4_QCD_HT1500to2000_DT            =      (TH1I*)f2->Get("h_nAK4_DT");
 ////////////////////////////////////// 2000toInf /////////////////////////////////////////
 
   TH1I *h_SJ_nAK4_100_DT_HT2000toInf =      (TH1I*)f3->Get("h_SJ_nAK4_100_DT");
@@ -134,47 +88,6 @@ void makeCRComparisonPlots()
   
   std::cout << "Scale histograms 1" << std::endl;
 
-  h_SJ_nAK4_100_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_SJ_nAK4_200_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_SJ_mass_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_disuperjet_mass_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_MSJ_mass_vs_MdSJ_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_SJ_nAK4_100_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_SJ_nAK4_200_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_SJ_mass_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_disuperjet_mass_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_MSJ_mass_vs_MdSJ_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
-  h_AK8_jet_mass_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
-  h_AK4_jet_mass_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
-  h_totHT_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
-  h_nfatjets_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
-  h_nAK4_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
-  h_AK8_jet_mass_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
-  h_AK4_jet_mass_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
-  h_totHT_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
-  h_nfatjets_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
-  h_nAK4_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
-
-  h_SJ_nAK4_100_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_SJ_nAK4_200_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_SJ_mass_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_disuperjet_mass_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_MSJ_mass_vs_MdSJ_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_SJ_nAK4_100_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_SJ_nAK4_200_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_SJ_mass_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_disuperjet_mass_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_MSJ_mass_vs_MdSJ_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
-  h_AK8_jet_mass_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
-  h_AK4_jet_mass_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
-  h_totHT_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
-  h_nfatjets_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
-  h_nAK4_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
-  h_AK8_jet_mass_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
-  h_AK4_jet_mass_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
-  h_totHT_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
-  h_nfatjets_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
-  h_nAK4_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
 
   h_SJ_nAK4_100_CR_HT2000toInf->Scale(QCD_HT2000toInf_SF);
   h_SJ_nAK4_200_CR_HT2000toInf->Scale(QCD_HT2000toInf_SF);
@@ -200,7 +113,6 @@ void makeCRComparisonPlots()
 
 
 
-  std::cout << "Integral-h_SJ_nAK4_100_DT_HT1500to2000 (post scaling) " <<  h_SJ_nAK4_100_DT_HT1500to2000->Integral() <<std::endl;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,14 +122,10 @@ void makeCRComparisonPlots()
   ////////////nAK4_100//////////////
 
   TH1I *h_SJ_nAK4_100_CR = new TH1I(*h_SJ_nAK4_100_CR_HT2000toInf);
-  h_SJ_nAK4_100_CR->Add(h_SJ_nAK4_100_CR_HT1500to2000);
-  h_SJ_nAK4_100_CR->Add(h_SJ_nAK4_100_CR_HT1000to1500);
   h_SJ_nAK4_100_CR->Scale(1000000./h_SJ_nAK4_100_CR->Integral());
   std::cout << "Integral-h_SJ_nAK4_100_CR " <<  h_SJ_nAK4_100_CR->Integral() <<std::endl;
 
   TH1 *h_SJ_nAK4_100_DT = new TH1I(*h_SJ_nAK4_100_DT_HT2000toInf);
-  h_SJ_nAK4_100_DT->Add(h_SJ_nAK4_100_DT_HT1000to1500);
-  h_SJ_nAK4_100_DT->Add(h_SJ_nAK4_100_DT_HT1500to2000);
   h_SJ_nAK4_100_DT->Scale(1000000./h_SJ_nAK4_100_DT->Integral());
   std::cout << "Integral-h_SJ_nAK4_100_DT " <<  h_SJ_nAK4_100_DT->Integral() <<std::endl;
   h_SJ_nAK4_100_CR->SetFillColor(kRed);
@@ -227,15 +135,10 @@ void makeCRComparisonPlots()
   ////////////nAK4_200//////////////
 
   TH1I *h_SJ_nAK4_200_CR = new TH1I(*h_SJ_nAK4_200_CR_HT2000toInf);
-  h_SJ_nAK4_200_CR->Add(h_SJ_nAK4_200_CR_HT1000to1500);
-  h_SJ_nAK4_200_CR->Add(h_SJ_nAK4_200_CR_HT1500to2000);
   h_SJ_nAK4_200_CR->Scale(1000000/h_SJ_nAK4_200_CR->Integral());
   std::cout << "Integral-h_SJ_nAK4_200_CR " <<  h_SJ_nAK4_200_CR->Integral() <<std::endl;
 
   TH1I *h_SJ_nAK4_200_DT = new TH1I(*h_SJ_nAK4_200_DT_HT2000toInf);
-  h_SJ_nAK4_200_DT->Add(h_SJ_nAK4_200_DT_HT1000to1500);
-  h_SJ_nAK4_200_DT->Add(h_SJ_nAK4_200_DT_HT1500to2000);
-
   h_SJ_nAK4_200_DT->Scale(1000000/h_SJ_nAK4_200_DT->Integral());
   std::cout << "Integral-h_SJ_nAK4_200_DT " <<  h_SJ_nAK4_200_DT->Integral() <<std::endl;
   h_SJ_nAK4_200_CR->SetFillColor(kRed);
@@ -245,14 +148,10 @@ void makeCRComparisonPlots()
 ///////////////////////////////////////////////////////////
 ///////////h_SJ_mass//////////////////////
   TH1F *h_SJ_mass_CR = new TH1F(*h_SJ_mass_CR_HT2000toInf);
-  h_SJ_mass_CR->Add(h_SJ_mass_CR_HT1000to1500);
-  h_SJ_mass_CR->Add(h_SJ_mass_CR_HT1500to2000);
   h_SJ_mass_CR->Scale(1./h_SJ_mass_CR->Integral());
   std::cout << "Integral-h_SJ_mass_CR " <<  h_SJ_mass_CR->Integral() <<std::endl;
 
   TH1F *h_SJ_mass_DT = new TH1F(*h_SJ_mass_DT_HT2000toInf);
-  h_SJ_mass_DT->Add(h_SJ_mass_DT_HT1000to1500);
-  h_SJ_mass_DT->Add(h_SJ_mass_DT_HT1500to2000);
   h_SJ_mass_DT->Scale(1./h_SJ_mass_DT->Integral());
   std::cout << "Integral-h_SJ_mass_DT " <<  h_SJ_mass_DT->Integral() <<std::endl;
 
@@ -262,14 +161,10 @@ void makeCRComparisonPlots()
 ///////////////////////////////////////////////////////////
 ///////////h_disuperjet_mass//////////////////////
   TH1F *h_disuperjet_mass_CR = new TH1F(*h_disuperjet_mass_CR_HT2000toInf);
-  h_disuperjet_mass_CR->Add(h_disuperjet_mass_CR_HT1000to1500);
-  h_disuperjet_mass_CR->Add(h_disuperjet_mass_CR_HT1500to2000);
   h_disuperjet_mass_CR->Scale(1./h_disuperjet_mass_CR->Integral());
   std::cout << "Integral-h_disuperjet_mass_CR " <<  h_disuperjet_mass_CR->Integral() <<std::endl;
 
   TH1F *h_disuperjet_mass_DT = new TH1F(*h_disuperjet_mass_DT_HT2000toInf);
-  h_disuperjet_mass_DT->Add(h_disuperjet_mass_DT_HT1000to1500);
-  h_disuperjet_mass_DT->Add(h_disuperjet_mass_DT_HT1500to2000);
   h_disuperjet_mass_DT->Scale(1./h_disuperjet_mass_DT->Integral());
   std::cout << "Integral-h_disuperjet_mass_DT " <<  h_disuperjet_mass_DT->Integral() <<std::endl;
 
@@ -279,14 +174,10 @@ void makeCRComparisonPlots()
 ///////////////////////////////////////////////////////////
 ///////////h_disuperjet_mass//////////////////////
   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F(*h_MSJ_mass_vs_MdSJ_CR_HT2000toInf);
-  h_MSJ_mass_vs_MdSJ_CR->Add(h_MSJ_mass_vs_MdSJ_CR_HT1000to1500);
-  h_MSJ_mass_vs_MdSJ_CR->Add(h_MSJ_mass_vs_MdSJ_CR_HT1500to2000);
   h_MSJ_mass_vs_MdSJ_CR->Scale(1000000/h_MSJ_mass_vs_MdSJ_CR->Integral());
   std::cout << "Integral-h_MSJ_mass_vs_MdSJ_CR " <<  h_MSJ_mass_vs_MdSJ_CR->Integral() <<std::endl;
 
   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F(*h_MSJ_mass_vs_MdSJ_DT_HT2000toInf);
-  h_MSJ_mass_vs_MdSJ_DT->Add(h_MSJ_mass_vs_MdSJ_DT_HT1000to1500);
-  h_MSJ_mass_vs_MdSJ_DT->Add(h_MSJ_mass_vs_MdSJ_DT_HT1500to2000);
   h_MSJ_mass_vs_MdSJ_DT->Scale(1000000/h_MSJ_mass_vs_MdSJ_DT->Integral());
   std::cout << "Integral-h_MSJ_mass_vs_MdSJ_DT " <<  h_MSJ_mass_vs_MdSJ_DT->Integral() <<std::endl;
 
@@ -294,13 +185,9 @@ void makeCRComparisonPlots()
 ///////////////////////////////////////////////////////////
 ///////////h_AK8_jet_mass//////////////////////
   TH1F *h_AK8_jet_mass_CR = new TH1F(*h_AK8_jet_mass_QCD_HT2000toInf_CR);
-  h_AK8_jet_mass_CR->Add(h_AK8_jet_mass_QCD_HT1000to1500_CR);
-  h_AK8_jet_mass_CR->Add(h_AK8_jet_mass_QCD_HT1500to2000_CR);
   h_AK8_jet_mass_CR->Scale(1000000/h_AK8_jet_mass_CR->Integral());
 
   TH1F *h_AK8_jet_mass_DT = new TH1F(*h_AK8_jet_mass_QCD_HT2000toInf_DT);
-  h_AK8_jet_mass_DT->Add(h_AK8_jet_mass_QCD_HT1000to1500_DT);
-  h_AK8_jet_mass_DT->Add(h_AK8_jet_mass_QCD_HT1500to2000_DT);
   h_AK8_jet_mass_DT->Scale(1000000/h_AK8_jet_mass_DT->Integral());
 
 
@@ -308,61 +195,241 @@ void makeCRComparisonPlots()
 ///////////////////////////////////////////////////////////////////
 ///////////h_AK4_jet_mass//////////////////////
   TH1F *h_AK4_jet_mass_CR = new TH1F(*h_AK4_jet_mass_QCD_HT2000toInf_CR);
-  h_AK4_jet_mass_CR->Add(h_AK4_jet_mass_QCD_HT1000to1500_CR);
-  h_AK4_jet_mass_CR->Add(h_AK4_jet_mass_QCD_HT1500to2000_CR);
   h_AK4_jet_mass_CR->Scale(1000000/h_AK4_jet_mass_CR->Integral());
 
   TH1F *h_AK4_jet_mass_DT = new TH1F(*h_AK4_jet_mass_QCD_HT2000toInf_DT);
-  h_AK4_jet_mass_DT->Add(h_AK4_jet_mass_QCD_HT1000to1500_DT);
-  h_AK4_jet_mass_DT->Add(h_AK4_jet_mass_QCD_HT1500to2000_DT);
   h_AK4_jet_mass_DT->Scale(1000000/h_AK4_jet_mass_DT->Integral());
 
 
 ///////////////////////////////////////////////////////////////////
 ///////////h_totHT//////////////////////
   TH1F *h_totHT_CR = new TH1F(*h_totHT_QCD_HT2000toInf_CR);
-  h_totHT_CR->Add(h_totHT_QCD_HT1000to1500_CR);
-  h_totHT_CR->Add(h_totHT_QCD_HT1500to2000_CR);
   h_totHT_CR->Scale(1000000/h_totHT_CR->Integral());
 
   TH1F *h_totHT_DT = new TH1F(*h_totHT_QCD_HT2000toInf_DT);
-  h_totHT_DT->Add(h_totHT_QCD_HT1000to1500_DT);
-  h_totHT_DT->Add(h_totHT_QCD_HT1500to2000_DT);
   h_totHT_DT->Scale(1000000/h_totHT_DT->Integral());
 
 
 ///////////////////////////////////////////////////////////////////
 ///////////h_nfatjets//////////////////////
   TH1I *h_nfatjets_CR = new TH1I(*h_nfatjets_QCD_HT2000toInf_CR);
-  h_nfatjets_CR->Add(h_nfatjets_QCD_HT1000to1500_CR);
-  h_nfatjets_CR->Add(h_nfatjets_QCD_HT1500to2000_CR);
   std::cout << "Total number of events in control region: " << h_nfatjets_CR->Integral() << std::endl;
   h_nfatjets_CR->Scale(1000000/h_nfatjets_CR->Integral());
 
   TH1I *h_nfatjets_DT = new TH1I(*h_nfatjets_QCD_HT2000toInf_DT);
-  h_nfatjets_DT->Add(h_nfatjets_QCD_HT1000to1500_DT);
-  h_nfatjets_DT->Add(h_nfatjets_QCD_HT1500to2000_DT);
   h_nfatjets_DT->Scale(1000000/h_nfatjets_DT->Integral());
 
 ///////////////////////////////////////////////////////////////////
 ///////////h_nAK4//////////////////////
   TH1I *h_nAK4_CR = new TH1I(*h_nAK4_QCD_HT2000toInf_CR);
-  h_nAK4_CR->Add(h_nAK4_QCD_HT1000to1500_CR);
-  h_nAK4_CR->Add(h_nAK4_QCD_HT1500to2000_CR);
   h_nAK4_CR->Scale(1000000/h_nAK4_CR->Integral());
 
   TH1I *h_nAK4_DT = new TH1I(*h_nAK4_QCD_HT2000toInf_DT);
-  h_nAK4_DT->Add(h_nAK4_QCD_HT1000to1500_DT);
-  h_nAK4_DT->Add(h_nAK4_QCD_HT1500to2000_DT);
   h_nAK4_DT->Scale(1000000/h_nAK4_DT->Integral());
 
 
+  TH1I *h_SJ_nLooseBtag_HT2000toInf  =      (TH1I*)f3->Get("h_nLooseBTags");
+  h_SJ_nLooseBtag_HT2000toInf->Scale();
+
+  TH1I *h_SJ_nLooseBtag = new TH1I(*h_SJ_nLooseBtag_HT2000toInf);
+
+
+  /// other HT bin stuff
+  if(includeAllHTBins)
+  {
+    TFile *f1 = new TFile("/home/ethan/Documents/QCD_HT1000to1500_combined_cutbased_processed.root");   //need to add these two together
+    TFile *f2 = new TFile("/home/ethan/Documents/QCD_HT1500to2000_combined_cutbased_processed.root");   
+
+    ///////////////////////////////1000to1500//////////////////////////////////
+    TH1I *h_SJ_nAK4_100_CR_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_100_CR");
+    TH1I *h_SJ_nAK4_200_CR_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_200_CR");
+    TH1F *h_SJ_mass_CR_HT1000to1500 =          (TH1F*)f1->Get("h_SJ_mass_CR");
+    TH1F *h_disuperjet_mass_CR_HT1000to1500 =  (TH1F*)f1->Get("h_disuperjet_mass_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_HT1000to1500 = (TH2F*)f1->Get("h_MSJ_mass_vs_MdSJ_CR");
+
+    TH1I *h_SJ_nAK4_100_DT_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_100_DT");
+    TH1I *h_SJ_nAK4_200_DT_HT1000to1500 =      (TH1I*)f1->Get("h_SJ_nAK4_200_DT");
+    TH1F *h_SJ_mass_DT_HT1000to1500 =          (TH1F*)f1->Get("h_SJ_mass_DT");
+    TH1F *h_disuperjet_mass_DT_HT1000to1500 =  (TH1F*)f1->Get("h_disuperjet_mass_DT");
+    TH2F *h_MSJ_mass_vs_MdSJ_DT_HT1000to1500 = (TH2F*)f1->Get("h_MSJ_mass_vs_MdSJ_DT");
+
+    TH1F* h_AK8_jet_mass_QCD_HT1000to1500_CR    =      (TH1F*)f1->Get("h_AK8_jet_mass_CR");
+    TH1F* h_AK4_jet_mass_QCD_HT1000to1500_CR    =      (TH1F*)f1->Get("h_AK4_jet_mass_CR");
+    TH1F* h_totHT_QCD_HT1000to1500_CR           =      (TH1F*)f1->Get("h_totHT_CR");
+    TH1I* h_nfatjets_QCD_HT1000to1500_CR        =      (TH1I*)f1->Get("h_nfatjets_CR");
+    TH1I* h_nAK4_QCD_HT1000to1500_CR            =      (TH1I*)f1->Get("h_nAK4_CR");
+
+    TH1F* h_AK8_jet_mass_QCD_HT1000to1500_DT    =      (TH1F*)f1->Get("h_AK8_jet_mass_DT");
+    TH1F* h_AK4_jet_mass_QCD_HT1000to1500_DT    =      (TH1F*)f1->Get("h_AK4_jet_mass_DT");
+    TH1F* h_totHT_QCD_HT1000to1500_DT           =      (TH1F*)f1->Get("h_totHT_DT");
+    TH1I* h_nfatjets_QCD_HT1000to1500_DT        =      (TH1I*)f1->Get("h_nfatjets_DT");
+    TH1I* h_nAK4_QCD_HT1000to1500_DT            =      (TH1I*)f1->Get("h_nAK4_DT");
+  ////////////////////////////////////// 1500to2000 /////////////////////////////////////////
+    TH1I *h_SJ_nAK4_100_CR_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_100_CR");
+    TH1I *h_SJ_nAK4_200_CR_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_200_CR");
+    TH1F *h_SJ_mass_CR_HT1500to2000 =          (TH1F*)f2->Get("h_SJ_mass_CR");
+    TH1F *h_disuperjet_mass_CR_HT1500to2000 =  (TH1F*)f2->Get("h_disuperjet_mass_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_HT1500to2000 = (TH2F*)f2->Get("h_MSJ_mass_vs_MdSJ_CR");
+
+    TH1I *h_SJ_nAK4_100_DT_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_100_DT");
+    TH1I *h_SJ_nAK4_200_DT_HT1500to2000 =      (TH1I*)f2->Get("h_SJ_nAK4_200_DT");
+    TH1F *h_SJ_mass_DT_HT1500to2000 =          (TH1F*)f2->Get("h_SJ_mass_DT");
+    TH1F *h_disuperjet_mass_DT_HT1500to2000 =  (TH1F*)f2->Get("h_disuperjet_mass_DT");
+    TH2F *h_MSJ_mass_vs_MdSJ_DT_HT1500to2000 = (TH2F*)f2->Get("h_MSJ_mass_vs_MdSJ_DT");
+
+    TH1F* h_AK8_jet_mass_QCD_HT1500to2000_CR    =      (TH1F*)f2->Get("h_AK8_jet_mass_CR");
+    TH1F* h_AK4_jet_mass_QCD_HT1500to2000_CR    =      (TH1F*)f2->Get("h_AK4_jet_mass_CR");
+    TH1F* h_totHT_QCD_HT1500to2000_CR           =      (TH1F*)f2->Get("h_totHT_CR");
+    TH1I* h_nfatjets_QCD_HT1500to2000_CR        =      (TH1I*)f2->Get("h_nfatjets_CR");
+    TH1I* h_nAK4_QCD_HT1500to2000_CR            =      (TH1I*)f2->Get("h_nAK4_CR");
+
+    TH1F* h_AK8_jet_mass_QCD_HT1500to2000_DT    =      (TH1F*)f2->Get("h_AK8_jet_mass_DT");
+    TH1F* h_AK4_jet_mass_QCD_HT1500to2000_DT    =      (TH1F*)f2->Get("h_AK4_jet_mass_DT");
+    TH1F* h_totHT_QCD_HT1500to2000_DT           =      (TH1F*)f2->Get("h_totHT_DT");
+    TH1I* h_nfatjets_QCD_HT1500to2000_DT        =      (TH1I*)f2->Get("h_nfatjets_DT");
+    TH1I* h_nAK4_QCD_HT1500to2000_DT            =      (TH1I*)f2->Get("h_nAK4_DT"); 
+
+    h_SJ_nAK4_100_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_SJ_nAK4_200_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_SJ_mass_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_disuperjet_mass_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_MSJ_mass_vs_MdSJ_CR_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_SJ_nAK4_100_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_SJ_nAK4_200_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_SJ_mass_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_disuperjet_mass_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_MSJ_mass_vs_MdSJ_DT_HT1000to1500->Scale(QCD_HT1000to1500_SF);
+    h_AK8_jet_mass_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
+    h_AK4_jet_mass_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
+    h_totHT_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
+    h_nfatjets_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
+    h_nAK4_QCD_HT1000to1500_CR->Scale(QCD_HT1000to1500_SF);
+    h_AK8_jet_mass_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
+    h_AK4_jet_mass_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
+    h_totHT_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
+    h_nfatjets_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
+    h_nAK4_QCD_HT1000to1500_DT->Scale(QCD_HT1000to1500_SF);
+
+    h_SJ_nAK4_100_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_SJ_nAK4_200_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_SJ_mass_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_disuperjet_mass_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_MSJ_mass_vs_MdSJ_CR_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_SJ_nAK4_100_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_SJ_nAK4_200_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_SJ_mass_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_disuperjet_mass_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_MSJ_mass_vs_MdSJ_DT_HT1500to2000->Scale(QCD_HT1500to2000_SF);
+    h_AK8_jet_mass_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
+    h_AK4_jet_mass_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
+    h_totHT_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
+    h_nfatjets_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
+    h_nAK4_QCD_HT1500to2000_CR->Scale(QCD_HT1500to2000_SF);
+    h_AK8_jet_mass_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
+    h_AK4_jet_mass_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
+    h_totHT_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
+    h_nfatjets_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
+    h_nAK4_QCD_HT1500to2000_DT->Scale(QCD_HT1500to2000_SF);
+
+    h_SJ_nAK4_100_CR->Add(h_SJ_nAK4_100_CR_HT1500to2000);
+    h_SJ_nAK4_100_CR->Add(h_SJ_nAK4_100_CR_HT1000to1500);
+    h_SJ_nAK4_100_CR->Scale(1000000./h_SJ_nAK4_100_CR->Integral());
+
+    h_SJ_nAK4_100_DT->Add(h_SJ_nAK4_100_DT_HT1000to1500);
+    h_SJ_nAK4_100_DT->Add(h_SJ_nAK4_100_DT_HT1500to2000);
+    h_SJ_nAK4_100_DT->Scale(1000000./h_SJ_nAK4_100_DT->Integral());
+
+    h_SJ_nAK4_200_CR->Add(h_SJ_nAK4_200_CR_HT1000to1500);
+    h_SJ_nAK4_200_CR->Add(h_SJ_nAK4_200_CR_HT1500to2000);
+    h_SJ_nAK4_200_CR->Scale(1000000/h_SJ_nAK4_200_CR->Integral());
+
+    h_SJ_nAK4_200_DT->Add(h_SJ_nAK4_200_DT_HT1000to1500);
+    h_SJ_nAK4_200_DT->Add(h_SJ_nAK4_200_DT_HT1500to2000);
+    h_SJ_nAK4_200_DT->Scale(1000000/h_SJ_nAK4_200_DT->Integral());
+
+    h_SJ_mass_CR->Add(h_SJ_mass_CR_HT1000to1500);
+    h_SJ_mass_CR->Add(h_SJ_mass_CR_HT1500to2000);
+    h_SJ_mass_CR->Scale(1./h_SJ_mass_CR->Integral());
+
+    h_SJ_mass_DT->Add(h_SJ_mass_DT_HT1000to1500);
+    h_SJ_mass_DT->Add(h_SJ_mass_DT_HT1500to2000);
+    h_SJ_mass_DT->Scale(1./h_SJ_mass_DT->Integral());
+
+    h_disuperjet_mass_CR->Add(h_disuperjet_mass_CR_HT1000to1500);
+    h_disuperjet_mass_CR->Add(h_disuperjet_mass_CR_HT1500to2000);
+    h_disuperjet_mass_CR->Scale(1./h_disuperjet_mass_CR->Integral());
+
+    h_disuperjet_mass_DT->Add(h_disuperjet_mass_DT_HT1000to1500);
+    h_disuperjet_mass_DT->Add(h_disuperjet_mass_DT_HT1500to2000);
+    h_disuperjet_mass_DT->Scale(1./h_disuperjet_mass_DT->Integral());
+
+
+    h_MSJ_mass_vs_MdSJ_CR->Add(h_MSJ_mass_vs_MdSJ_CR_HT1000to1500);
+    h_MSJ_mass_vs_MdSJ_CR->Add(h_MSJ_mass_vs_MdSJ_CR_HT1500to2000);
+    h_MSJ_mass_vs_MdSJ_CR->Scale(1000000/h_MSJ_mass_vs_MdSJ_CR->Integral());
+
+
+    h_MSJ_mass_vs_MdSJ_DT->Add(h_MSJ_mass_vs_MdSJ_DT_HT1000to1500);
+    h_MSJ_mass_vs_MdSJ_DT->Add(h_MSJ_mass_vs_MdSJ_DT_HT1500to2000);
+    h_MSJ_mass_vs_MdSJ_DT->Scale(1000000/h_MSJ_mass_vs_MdSJ_DT->Integral());
+
+    h_AK8_jet_mass_CR->Add(h_AK8_jet_mass_QCD_HT1000to1500_CR);
+    h_AK8_jet_mass_CR->Add(h_AK8_jet_mass_QCD_HT1500to2000_CR);
+    h_AK8_jet_mass_CR->Scale(1000000/h_AK8_jet_mass_CR->Integral());
+
+    h_AK8_jet_mass_DT->Add(h_AK8_jet_mass_QCD_HT1000to1500_DT);
+    h_AK8_jet_mass_DT->Add(h_AK8_jet_mass_QCD_HT1500to2000_DT);
+    h_AK8_jet_mass_DT->Scale(1000000/h_AK8_jet_mass_DT->Integral());
+
+    h_AK4_jet_mass_CR->Add(h_AK4_jet_mass_QCD_HT1000to1500_CR);
+    h_AK4_jet_mass_CR->Add(h_AK4_jet_mass_QCD_HT1500to2000_CR);
+    h_AK4_jet_mass_CR->Scale(1000000/h_AK4_jet_mass_CR->Integral());
+
+    h_AK4_jet_mass_DT->Add(h_AK4_jet_mass_QCD_HT1000to1500_DT);
+    h_AK4_jet_mass_DT->Add(h_AK4_jet_mass_QCD_HT1500to2000_DT);
+    h_AK4_jet_mass_DT->Scale(1000000/h_AK4_jet_mass_DT->Integral());
+
+    h_totHT_CR->Add(h_totHT_QCD_HT1000to1500_CR);
+    h_totHT_CR->Add(h_totHT_QCD_HT1500to2000_CR);
+    h_totHT_CR->Scale(1000000/h_totHT_CR->Integral());
+
+    h_totHT_DT->Add(h_totHT_QCD_HT1000to1500_DT);
+    h_totHT_DT->Add(h_totHT_QCD_HT1500to2000_DT);
+    h_totHT_DT->Scale(1000000/h_totHT_DT->Integral());
+
+
+    h_nfatjets_CR->Add(h_nfatjets_QCD_HT1000to1500_CR);
+    h_nfatjets_CR->Add(h_nfatjets_QCD_HT1500to2000_CR);
+    h_nfatjets_CR->Scale(1000000/h_nfatjets_CR->Integral());
+
+    h_nfatjets_DT->Add(h_nfatjets_QCD_HT1000to1500_DT);
+    h_nfatjets_DT->Add(h_nfatjets_QCD_HT1500to2000_DT);
+    h_nfatjets_DT->Scale(1000000/h_nfatjets_DT->Integral());
+
+    h_nAK4_CR->Add(h_nAK4_QCD_HT1000to1500_CR);
+    h_nAK4_CR->Add(h_nAK4_QCD_HT1500to2000_CR);
+    h_nAK4_CR->Scale(1000000/h_nAK4_CR->Integral());
+
+    h_nAK4_DT->Add(h_nAK4_QCD_HT1000to1500_DT);
+    h_nAK4_DT->Add(h_nAK4_QCD_HT1500to2000_DT);
+    h_nAK4_DT->Scale(1000000/h_nAK4_DT->Integral());
+
+  std::cout << "Integral-h_SJ_nAK4_100_DT_HT1500to2000 (post scaling) " <<  h_SJ_nAK4_100_DT_HT1500to2000->Integral() <<std::endl;
+
+
+    TH1I *h_SJ_nLooseBtag_HT1000to1500 =      (TH1I*)f1->Get("h_nLooseBTags");
+    TH1I *h_SJ_nLooseBtag_HT1500to2000 =      (TH1I*)f2->Get("h_nLooseBTags");
+
+
+    h_SJ_nLooseBtag_HT1000to1500->Scale();
+    h_SJ_nLooseBtag_HT1500to2000->Scale();
+
+    h_SJ_nLooseBtag->Add(h_SJ_nLooseBtag_HT1500to2000);
+    h_SJ_nLooseBtag->Add(h_SJ_nLooseBtag_HT1000to1500);
+  }
+
+
 ///////////////////////////////TTBar stuff /////////////////////////
-
-
-
-
-
 
   if(includeTTBar)
   {
@@ -615,24 +682,12 @@ void makeCRComparisonPlots()
   h_SJ_nAK4_100_CR->Add(h_SJ_nAK4_100_CR_TTtoSemiLeptonic);
     h_SJ_nAK4_100_CR->Scale(1000000./h_SJ_nAK4_100_CR->Integral());
 
+
   }
 
 
   TCanvas *c1 = new TCanvas("c1","",400,20, 1500,1500);
 
-  TH1I *h_SJ_nLooseBtag_HT1000to1500 =      (TH1I*)f1->Get("h_nLooseBTags");
-  TH1I *h_SJ_nLooseBtag_HT1500to2000 =      (TH1I*)f2->Get("h_nLooseBTags");
-  TH1I *h_SJ_nLooseBtag_HT2000toInf  =      (TH1I*)f3->Get("h_nLooseBTags");
-
-
-  h_SJ_nLooseBtag_HT1000to1500->Scale();
-  h_SJ_nLooseBtag_HT1500to2000->Scale();
-  h_SJ_nLooseBtag_HT2000toInf->Scale();
-
-
-  TH1I *h_SJ_nLooseBtag = new TH1I(*h_SJ_nLooseBtag_HT1000to1500);
-  h_SJ_nLooseBtag->Add(h_SJ_nLooseBtag_HT1500to2000);
-  h_SJ_nLooseBtag->Add(h_SJ_nLooseBtag_HT2000toInf);
   h_SJ_nLooseBtag->Draw("HIST");
   c1->SaveAs("h_nLooseBtag.png");  
 

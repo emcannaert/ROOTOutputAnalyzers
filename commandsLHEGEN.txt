@@ -1,0 +1,124 @@
+   exact commands run (minus some irrelevent ones where I was verifying file locations)
+
+   872	  2:18	mkdir testLPCChat   #testing area
+   873	  2:18	cd testLPCChat/
+   874   2:18 export SCRAM_ARCH=slc7_amd64_gcc700
+   875   2:18 scram p CMSSW CMSSW_10_6_32_patch1
+   876   2:19 cd CMSSW_10_6_32_patch1/src
+   877   2:19 eval scram runtime -sh
+   878   2:19 curl -s -k https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/B2G-RunIISummer20UL18wmLHEGEN-04977 --retry 3 --create-dirs -o Configuration/GenProduction/python/B2G-RunIISummer20UL18wmLHEGEN-04977-fragment.py
+   879   2:20 [ -s Configuration/GenProduction/python/B2G-RunIISummer20UL18wmLHEGEN-04977-fragment.py ]
+   880	2:26	vim Configuration/GenProduction/python/B2G-RunIISummer20UL18wmLHEGEN-04977-fragment.py   #changing gridpack location in fragment
+   883	2:28	scram b
+   884	2:28	cd ../..
+   889	2:28	cmsenv 
+   890	2:28	cmsDriver.py Configuration/GenProduction/python/B2G-RunIISummer20UL18wmLHEGEN-04977-fragment.py --python_filename B2G-RunIISummer20UL18wmLHEGEN-04977_1_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN,LHE --fileout file:B2G-RunIISummer20UL18wmLHEGEN-04977.root --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision --step LHE,GEN --geometry DB:Extended --era Run2_2018 --no_exec --mc -n 10
+   893	2:29	cmsRun B2G-RunIISummer20UL18wmLHEGEN-04977_1_cfg.py
+
+
+
+   output -- 
+
+
+   [cannaert@cmslpc136 src]$ cmsRun B2G-RunIISummer20UL18wmLHEGEN-04977_1_cfg.py
+   ______________________________________     
+         Running Generic Tarball/Gridpack     
+   ______________________________________     
+gridpack tarball path = /uscms_data/d3/cannaert/gridpackGeneration/genproductions/bin/MadGraph5_aMCatNLO/SuuToChiChi_FullyHadronic_WbWb_MSuu8TeV_MChi3TeV_slc7_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+%MSG-MG5 number of events requested = 10
+%MSG-MG5 random seed used for the run = 234567
+%MSG-MG5 thread count requested = 1
+%MSG-MG5 residual/optional arguments = 
+%MSG-MG5 number of events requested = 10
+%MSG-MG5 random seed used for the run = 234567
+%MSG-MG5 number of cpus = 1
+%MSG-MG5 SCRAM_ARCH version = slc7_amd64_gcc10
+%MSG-MG5 CMSSW version = CMSSW_12_4_8
+ERROR: Can not setup your current working area for SCRAM_ARCH: $ENV{SCRAM_ARCH}
+Your current development area ${location}/${areaname}
+is using a different ${areaname}/config then the one used for
+/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/CMSSW_12_4_8
+./runcmsgrid.sh: line 41: cd: CMSSW_12_4_8/src: No such file or directory
+Running MG5_aMC for the 1 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345670
+Now generating 10 events with random seed 2345670 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345670/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 1 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 2 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345671
+Now generating 10 events with random seed 2345671 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345671/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 2 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 3 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345672
+Now generating 10 events with random seed 2345672 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345672/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 3 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 4 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345673
+Now generating 10 events with random seed 2345673 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345673/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 4 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 5 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345674
+Now generating 10 events with random seed 2345674 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345674/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 5 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 6 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345675
+Now generating 10 events with random seed 2345675 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345675/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 6 finished, total number of produced events: 0/10
+
+Running MG5_aMC for the 7 time
+produced_lhe  0 nevt  10 submitting_event  10  remaining_event  10
+run.sh 10 2345676
+Now generating 10 events with random seed 2345676 and granularity 1
+MadGraph/MadEvent 5 works only with python 2.7/3.7 or later.
+               Please upgrate your version of python.
+mv: cannot stat './Events/GridRun_2345676/unweighted_events.lhe.gz': No such file or directory
+write ./events.lhe.gz
+gzip: events.lhe.gz: No such file or directory
+mv: cannot stat 'events.lhe.gz': No such file or directory
+run 7 finished, total number of produced events: 0/10

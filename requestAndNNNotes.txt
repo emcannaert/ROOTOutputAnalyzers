@@ -1,0 +1,10 @@
+thoughts about NN request
+	- have the datacards to make gridpacks to submit
+	- need to figure out how to do high HT QCD backgrund	
+		-events simply don't exist far out enough for us to be able to train well here
+			- would just be throwing out the signal events if we flatten in HT
+	- 10m events for a request is really nothing
+
+
+	- do we really need to do NN tagging for high Suu mass?
+		- show plot comparing NN vs cut-based approaches 

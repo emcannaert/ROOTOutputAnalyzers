@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void doThings(std::string inFileName, std::string outFileName, double& nEvents, double& nHTcut, double& nAK8JetCut,double& nHeavyAK8Cut, double& nBtagCut, double& nDoubleTagged,double& nNoBjets, double& nDoubleTaggedCR, double& NNDoubleTag, double& nDoubleTaggedCRNN,double eventScaleFactor)
+void doThings(std::string inFileName, std::string outFileName, double& nEvents, double& nHTcut, double& nAK8JetCut,double& nHeavyAK8Cut, double& nBtagCut, double& nDoubleTagged,double& nNoBjets, double& nDoubleTaggedCR, double& NNDoubleTag, double& nDoubleTaggedCRNN,double eventScaleFactor, std::string dataYear)
 {
    int eventnum = 0;int nhadevents = 0;int nfatjets = 0;int raw_nfatjets;int tot_nAK4_50,tot_nAK4_70;int SJ_nAK4_50[100],SJ_nAK4_70[100];
    double jet_pt[100], jet_eta[100], jet_mass[100], jet_dr[100], raw_jet_mass[100],raw_jet_pt[100],raw_jet_phi[100];
@@ -39,7 +39,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
    ////////////////////////////   btag SF variables //////////////////////
-   int _eventNumBTag,_eventNumPU _nAK4;
+   int _eventNumBTag,_eventNumPU, _nAK4;
    double _eventWeightBTag, _AK4_pt[100];
 
    const char *_inFilename = inFileName.c_str();
@@ -48,11 +48,13 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    std::string _inFilePUSF = "/home/ethan/Documents/bTag_eventWeight_2018.root";
 
    const char * _inFilebTaggingSFUse = _inFilebTaggingSF.c_str();
+   const char * _inFilePUSFUse = _inFilePUSF.c_str();
+
    std::cout << "Reading file: " << _inFilename << std::endl;
    TFile *f = new TFile(_inFilename);
    std::cout << "Also reading b-tag SF file: " << _inFilebTaggingSF << std::endl;
    TFile *f2 = new TFile(_inFilebTaggingSFUse);
-   TFile *f3 = new TFile(_inFilePUSF);
+   TFile *f3 = new TFile(_inFilePUSFUse);
 
    TFile outFile(_outFilename,"RECREATE");
 
@@ -150,20 +152,21 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    int failedbTag = 0;
    int failedRatio = 0;
    int failednAK8 = 0;
+
    TCanvas *c1 = new TCanvas("c1","",400,20, 2000,2000);
    // run this file four times, once for each of the different 2018 dataset pieces
 
    TTree *t1 = (TTree*)f->Get("skimmedTree");   //need to change this to something relevenet
    const Int_t nentries = t1->GetEntries();
 
-   TTree *t2 = (TTree*)f2->Get("weightsBTagging");   //need to change this to something relevenet
+   TTree *t2 = (TTree*)f2->Get("T");   //need to change this to something relevenet   weightsBTagging
    TTree *t3 = (TTree*)f3->Get("weightsPU");   //need to change this to something relevenet
 
    
    //const Int_t nentries_btagSF = t2->GetEntries();
 
    t1->AddFriend(t2);
-   t1->AddFriend(t3);
+   //t1->AddFriend(t3);
 
    //std::cout << t1->GetListOfBranches()->FindObject("AK4_partonFlavour") << std::endl;
    //t1->GetListOfBranches()->Print(); 
@@ -234,16 +237,17 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
    //////////////////////btag SF variables/////////////////////
-   t1->SetBranchAddress("weightsBTagging._eventNumBTag", &_eventNumBTag); 
-   t1->SetBranchAddress("weightsBTagging._nAK4", &_nAK4); 
-   t1->SetBranchAddress("weightsBTagging._eventWeightBTag", &_eventWeightBTag); 
-   t1->SetBranchAddress("weightsBTagging._AK4_pt", _AK4_pt); 
+   t1->SetBranchAddress("T._eventNumBTag", &_eventNumBTag); 
+   t1->SetBranchAddress("T._nAK4", &_nAK4); 
+   t1->SetBranchAddress("T._eventWeightBTag", &_eventWeightBTag); 
+   t1->SetBranchAddress("T._AK4_pt", _AK4_pt); 
 
+/*
    t1->SetBranchAddress("weightsPU._eventNumPU", &_eventNumPU); 
    t1->SetBranchAddress("weightsPU._eventWeightPU", &_eventWeightPU); 
    t1->SetBranchAddress("weightsPU._puWeightDown", &_puWeightDown); 
-   t1->SetBranchAddress("weightsPU._puWeightUp", _puWeightUp); 
-
+   t1->SetBranchAddress("weightsPU._puWeightUp", &_puWeightUp); 
+*/
 
    int totalEvents = 0;
    int nPreselected = 0;
@@ -276,9 +280,10 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       /////////////////////////////////////////////////////////////////////////////////
       ///////make sure event matches from analyzer matches event from btagSF tree//////
       double eventWeightToUse = 1.0;
+      /*
       double epsilon = 1e-8;
       int jetsMatch = 1;
-      if((eventnum == _eventNumBTag) && (nAK4 == _nAK4) && (eventnum == _eventNumPU) ) 
+      if((eventnum == _eventNumBTag) && (nAK4 == _nAK4) ) 
       {
          for(int iii =0;iii<nAK4;iii++)
          {
@@ -287,15 +292,15 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
          if(jetsMatch > 0)
          {
             eventWeightToUse *=_eventWeightBTag;
-            eventWeightToUse *=_eventNumPU;
+            //eventWeightToUse *=_eventNumPU;
          }
          else { std::cout << "bad event - AK4 jet pt does not match ... " << std::endl;}
       }  
       else
       {
-         std::cout << "something didnt match: eventnums: " << eventnum << "/" << _eventNumBTag << "/" << _eventNumPU<<  " nAK4: " << nAK4 << "/" << _nAK4 << std::endl;
+         std::cout << "something didnt match: eventnums: " << eventnum << "/" << _eventNumBTag << "/" <<  " nAK4: " << nAK4 << "/" << _nAK4 << std::endl;
       }
-
+      */
       
       /////////////////////////////////////////////////////////////////////////////////
       /////////////////////////////////////////////////////////////////////////////////
@@ -347,7 +352,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
       /// control region 
-      if( nTightBTags < 1 ) 
+      if( nLooseBtags < 1 ) 
       {
 
             nNoBjets+=eventScaleFactor;

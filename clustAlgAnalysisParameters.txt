@@ -1,0 +1,8 @@
+//totHT nbtaggedAK4 SJ_nAK4[0] SJ_nAK4[1] nfatjet_pre SJ_mass_100[0] SJ_mass_100[1]
+
+//4TeV
+3000 2 2 3 500 500
+//5TeV
+3500 2 2 3 500 500
+//6TeV
+4000 2 2 2 2 500. 500
