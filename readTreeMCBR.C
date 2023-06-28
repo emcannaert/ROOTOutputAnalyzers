@@ -52,9 +52,9 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
    std::cout << "Reading file: " << _inFilename << std::endl;
    TFile *f = new TFile(_inFilename);
-   std::cout << "Also reading b-tag SF file: " << _inFilebTaggingSF << std::endl;
-   TFile *f2 = new TFile(_inFilebTaggingSFUse);
-   TFile *f3 = new TFile(_inFilePUSFUse);
+   //std::cout << "Also reading b-tag SF file: " << _inFilebTaggingSF << std::endl;
+   //TFile *f2 = new TFile(_inFilebTaggingSFUse);
+   //TFile *f3 = new TFile(_inFilePUSFUse);
 
    TFile outFile(_outFilename,"RECREATE");
 
@@ -159,13 +159,13 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    TTree *t1 = (TTree*)f->Get("skimmedTree");   //need to change this to something relevenet
    const Int_t nentries = t1->GetEntries();
 
-   TTree *t2 = (TTree*)f2->Get("T");   //need to change this to something relevenet   weightsBTagging
-   TTree *t3 = (TTree*)f3->Get("weightsPU");   //need to change this to something relevenet
+   //TTree *t2 = (TTree*)f2->Get("T");   //need to change this to something relevenet   weightsBTagging
+   //TTree *t3 = (TTree*)f3->Get("weightsPU");   //need to change this to something relevenet
 
    
    //const Int_t nentries_btagSF = t2->GetEntries();
 
-   t1->AddFriend(t2);
+   //t1->AddFriend(t2);
    //t1->AddFriend(t3);
 
    //std::cout << t1->GetListOfBranches()->FindObject("AK4_partonFlavour") << std::endl;
@@ -236,12 +236,15 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    t1->SetBranchAddress("AK4_DeepJet_disc", AK4_DeepJet_disc); 
 
 
+
+/*
+
    //////////////////////btag SF variables/////////////////////
    t1->SetBranchAddress("T._eventNumBTag", &_eventNumBTag); 
    t1->SetBranchAddress("T._nAK4", &_nAK4); 
    t1->SetBranchAddress("T._eventWeightBTag", &_eventWeightBTag); 
    t1->SetBranchAddress("T._AK4_pt", _AK4_pt); 
-
+*/
 /*
    t1->SetBranchAddress("weightsPU._eventNumPU", &_eventNumPU); 
    t1->SetBranchAddress("weightsPU._eventWeightPU", &_eventWeightPU); 
@@ -259,8 +262,6 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    double medDeepCSV   = 0.4184;
    double tightDeepCSV = 0.7527;
    int passHTandAK8 = 0;
-
- 
    double looseDeepCSV_DeepJet = 0.0490;
    double medDeepCSV_DeepJet   = 0.2783;
    double tightDeepCSV_DeepJet = 0.7100;
@@ -541,8 +542,8 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 void readTreeMCBR()
 {
-   bool includeTTBar = false;
-   bool allHTBins    = false;
+   bool includeTTBar = true;
+   bool allHTBins    = true;
    double nEvents = 0;
    double nHTcut  = 0;
    double nAK8JetCut = 0;
@@ -557,20 +558,20 @@ void readTreeMCBR()
 
    if(includeTTBar && allHTBins)
    {
-      double eventScaleFactors[6] = {4.289571744,0.6042726685,0.2132134533,0.06588049107,0.03616639075,0.04563489275};
+      double eventScaleFactors[4] = {4.289571744,0.6042726685,0.2132134533,0.06588049107};//,0.03616639075,0.04563489275};
 
-      std::vector<std::string> inFileNames = {"/home/ethan/Documents/QCD_HT1000to1500_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT1500to2000_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/TTToHadronic_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/TTTo2l2nu_SKIMMED.root",
-                                            "/home/ethan/Documents/TTtoSemiLeptonic_SKIMMED_TEST.root" };
-      std::vector<std::string> outFileNames = {"/home/ethan/Documents/QCD_HT1000to1500_processed_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT1500to2000_processed_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT2000toInf_processed_TEST.root",
-                                            "/home/ethan/Documents/TTToHadronic_processed_TEST.root",
-                                            "/home/ethan/Documents/TTTo2l2nu_processed_TEST.root",
-                                            "/home/ethan/Documents/TTtoSemiLeptonic_processed_TEST.root" };
+      std::vector<std::string> inFileNames = {//"/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1000to1500_SKIMMED_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/TTToHadronic_SKIMMED_TEST.root"};//,
+                                            //"/home/ethan/Documents/rootFiles/skimmedRootFiles/TTTo2l2nu_SKIMMED.root",
+                                            //"/home/ethan/Documents/rootFiles/skimmedRootFiles/TTtoSemiLeptonic_SKIMMED_TEST.root" };
+      std::vector<std::string> outFileNames = {//"/home/ethan/Documents/QCD_HT1000to1500_processed_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/processedRootFiles/QCD_HT1500to2000_processed.root",
+                                            "/home/ethan/Documents/rootFiles/processedRootFiles/QCD_HT2000toInf_processed.root",
+                                            "/home/ethan/Documents/rootFiles/processedRootFiles/TTToHadronic_processed.root"};//,
+                                            //"/home/ethan/Documents/TTTo2l2nu_processed_TEST.root",
+                                            //"/home/ethan/Documents/TTtoSemiLeptonic_processed_TEST.root" };
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii],dataYear );
@@ -586,9 +587,9 @@ void readTreeMCBR()
    {
       double eventScaleFactors[3] = {4.289571744,0.6042726685,0.2132134533};
 
-      std::vector<std::string> inFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1000to1500_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
 
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_processed_TEST_NOBTSF"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_processed_TEST_NOBTSF"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_processed_TEST_NOBTSF"+ dataYear + ".root").c_str()};
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/processedRootFiles/QCD_HT1000to1500_processed"+ dataYear + ".root").c_str(),("/home/ethan/Documents/processedRootFiles/QCD_HT1500to2000_processed"+ dataYear + ".root").c_str(),("/home/ethan/Documents/processedRootFiles/QCD_HT2000toInf_processed"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii],dataYear );
@@ -604,9 +605,9 @@ void readTreeMCBR()
    {
       double eventScaleFactors[3] = {4.289571744,0.6042726685,0.2132134533};
 
-      std::vector<std::string> inFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
 
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_processed_TEST_NOBTSF"+ dataYear + ".root").c_str()};
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/processedRootFiles/QCD_HT2000toInf_processed"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR,NNDoubleTag,nDoubleTaggedCRNN,eventScaleFactors[iii],dataYear );

@@ -18,7 +18,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents)
 
    TFile outFile(_outFilename,"RECREATE");
 
-   TTree *t1 = (TTree*)f->Get("clusteringAnalyzerBR/tree");   //need to change this to something relevenet
+   TTree *t1 = (TTree*)f->Get("clusteringAnalyzerAll/tree");   //need to change this to something relevenet
    auto *t2 = t1->CloneTree(0);
    t2->SetName("skimmedTree");
    const Int_t nentries = t1->GetEntries();
@@ -43,25 +43,25 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents)
 
 void readTreeApplySelection()
 {
-   bool includeTTBar = false;
-   bool allHTBins    = false;
+   bool includeTTBar = true;
+   bool allHTBins    = true;
    double nEvents = 0;
 
    std::string dataYear = "2018";
    if(includeTTBar && allHTBins)
    {
-      std::vector<std::string> inFileNames = {"/home/ethan/QCD_HT1000to1500.root",
-                                        "/home/ethan/QCD_HT1500to2000.root",
-                                        "/home/ethan/QCD_HT2000toInf.root",
-                                         "/home/ethan/TTToHadronic.root",
-                                         "/home/ethan/TTToLeptonic.root",
-                                         "/home/ethan/TTToSemiLeptonic.root" };
-      std::vector<std::string> outFileNames = {"/home/ethan/Documents/QCD_HT1000to1500_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT1500to2000_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/TTToHadronic_SKIMMED_TEST.root",
-                                            "/home/ethan/Documents/TTTo2l2nu_combine_cutbased_SKIMMED.root",
-                                            "/home/ethan/Documents/TTtoSemiLeptonic_SKIMMED_TEST.root" };
+      std::vector<std::string> inFileNames = {
+                                        "/home/ethan/Documents/rootFiles/QCD_HT1500to2000_2018_combined.root",
+                                        "/home/ethan/Documents/rootFiles/QCD_HT2000toInf_2018_combined.root",
+                                         "/home/ethan/Documents/rootFiles/TTToHadronic_combined.root"};//,
+                                         //"/home/ethan/TTToLeptonic.root",
+                                         //"/home/ethan/TTToSemiLeptonic.root" };
+      std::vector<std::string> outFileNames = {
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST.root",
+                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/TTToHadronic_SKIMMED_TEST.root"};//,
+                                            //"/home/ethan/Documents/TTTo2l2nu_combine_cutbased_SKIMMED.root",
+                                            //"/home/ethan/Documents/TTtoSemiLeptonic_SKIMMED_TEST.root" };
   
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
@@ -72,9 +72,9 @@ void readTreeApplySelection()
    }
    else if( !includeTTBar && allHTBins)
    {
-      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT1000to1500_" + dataYear + ".root").c_str(),("/home/ethan/QCD_HT1500to2000_" + dataYear + ".root").c_str(), ("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/QCD_HT1000to1500_" + dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/QCD_HT1500to2000_" + dataYear + ".root").c_str(), ("/home/ethan/Documents/rootFiles/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
 
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT1000to1500_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT1500to2000_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1000to1500_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED_TEST_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents);
@@ -83,9 +83,9 @@ void readTreeApplySelection()
    }
    else
    {
-      std::vector<std::string> inFileNames = {("/home/ethan/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
+      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/QCD_HT2000toInf_" + dataYear + ".root").c_str()};
 
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
+      std::vector<std::string> outFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_TEST_"+ dataYear + ".root").c_str()};
       for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
       {
          doThings(inFileNames[iii],outFileNames[iii],nEvents);
