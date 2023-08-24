@@ -1,0 +1,44 @@
+
+
+
+intro - LHC approaches Run III, higher energy than ever, new processes become possible to study, new challenges, new techniques are needed
+
+motivation - plumb the reaches of what is possible at the LHC, the highest energies, the highest masses - ultra-heavy resonances 
+signal - Suu - scalar diquark, couples to up quarks, relatively large production xs at LHC compared to other analyses, can decay -> ug, can also couple to VLQ pairs that decay to heavy SM particles -> W+b, Zt, ht
+
+previous analyses?
+	- are there previous analyses from CMS for this ?
+
+the channel we want to do, why this is difficult - to VLQ pairs (all positive leptons), fully hadronic = largest branching fraction, but extremely high energies mean there are many jet multiplicities with different levels of merging, and jets themselves are highly boosted
+
+new techniqe - we want to create something that is flexible to study all the VLQ decays (and possibly other signals that are out there), levels of merging, and be robust enough to still function under highly-boosted lab jets
+
+effect on signal gen particles - does this actually work? short answer = yes, tested here on gen particles (maybe plots for different decay types?)
+
+
+aside: application to other analyses - show how this functions on other analyses (Z' to ttbar or something?)
+
+
+backgrounds - ttbar and QCD, cross sections and how to reduce them
+
+event selection - event selection and how it is designed to kill background, aside about b-tagging at high-pT
+
+signal region - cut-based - take a look at how the technique performs by looking at some plots in the SR -> SJ mass & diSJ mass 1D plots, an example of a 2D plot
+
+signal region sensitivity - what level of sensitivity can be expected (hoped for) in this region?
+
+control regions - CR to SR BR shape -> 1D or 2D distributions for the different backgrounds (stack)
+
+signal contamination in this region -> how much signal makes it into this region
+
+BEST NN idea - BEST NN implementation - brief description of NN tagging idea, example variable plots, confusion matrix (will probably have to retrain this to get a more accurate confusion matrix)
+
+results in MC for BEST - show 2D plot of signal and backgrounds in SR
+
+comparison to cut-based -> show the level of sensitivity that is gained from this
+
+statistical intepretation - linearized plot, QCD background correction idea
+
+future additions & timeline - finish combine card, QCD background correction,bin sizes?, add all systematics
+
+conclusion - technique is in mature state, seen good results, analysis is in stages of adding rest of systematics and doing statistical interpretation

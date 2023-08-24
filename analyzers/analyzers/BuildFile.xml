@@ -1,0 +1,15 @@
+<use name="FWCore/Framework"/>
+<use name="DataFormats/Candidate"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="PhysicsTools/CandUtils"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="fastjet"/>
+<use name="PhysicsTools/TensorFlow"/>
+<use name="root"/>
+<use name="correctionlib"/>
+<Flags LDFLAGS="`correction config --cflags --ldflags --rpath`"/>
+<export>
+  <lib name="1"/>
+</export>
+<flags EDM_PLUGIN="1"/>

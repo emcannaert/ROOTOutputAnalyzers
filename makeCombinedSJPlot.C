@@ -20,15 +20,15 @@ void makeCombinedSJPlot()
   //double h_TTJets2500toInf_SF  = 0.00008408965681;
 
 
-  TFile *f1 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu8TeV-MChi3TeV_cutbased_output.root");
-  TFile *f2 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu8TeV-MChi1TeV_cutbased_output.root");
-  TFile *f3 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu5TeV-MChi1p5TeV_cutbased_output.root");   //need to add these two together
+  TFile *f1 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu8TeV-MChi3TeV_cutbased_processed.root");
+  TFile *f2 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu8TeV-MChi1TeV_cutbased_processed.root");
+  TFile *f3 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu5TeV-MChi1p5TeV_cutbased_processed.root");   //need to add these two together
   //TFile *f9 = new TFile("/home/ethan/Documents/WJetsToLNu_combined_processed.root");
   //TFile *f10 = new TFile("/home/ethan/Documents/WJet_QQ_combined_processed.root");
-  TFile *f4 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu6TeV-MChi1TeV_cutbased_output.root");
-  TFile *f5 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu7TeV-MChi1TeV_cutbased_output.root");
-  TFile *f6 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu8TeV-MChi2TeV_cutbased_output.root");
-  TFile *f7 = new TFile("/home/ethan/Documents/cutBasedLessGeometric/ClusteringAlgorithm_MSuu4TeV-MChi1TeV_cutbased_output.root");
+  TFile *f4 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu6TeV-MChi1TeV_cutbased_processed.root");
+  TFile *f5 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu7TeV-MChi1TeV_cutbased_processed.root");
+  TFile *f6 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu8TeV-MChi2TeV_cutbased_processed.root");
+  TFile *f7 = new TFile("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu4TeV-MChi1TeV_cutbased_processed.root");
 
 /*
 ClusteringAlgorithm_MSuu8TeV-MChi3TeV_cutbased_output.root

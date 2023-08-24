@@ -11,7 +11,7 @@ double func(double x, double NNdisc, double cutDisc)
 }
 
 
-void readTreeMC()
+void readTreeGeneric()
 {
    int eventnum = 0;int nhadevents = 0;int nfatjets = 0;int raw_nfatjets;int tot_nAK4_50,tot_nAK4_70;int SJ_nAK4_50[100],SJ_nAK4_70[100];
    double jet_pt[100], jet_eta[100], jet_mass[100], jet_dr[100], raw_jet_mass[100],raw_jet_pt[100],raw_jet_phi[100];
@@ -43,70 +43,38 @@ void readTreeMC()
    std::string sampleStringSuu = "8";
    std::string sampleStringChi = "3";
 
-
-    
-   double diAK8Jet_mass [100];
-   double fourAK8JetMass;
    //4-1.5, 5-1.5,6-1.5,6-1,6-2,8-1,8-2,8-3
 
 
 
    std::string styleString = "cutbased";
 
-   TFile *f = new TFile( ("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_Suu" + sampleStringSuu + "TeV_chi" + sampleStringChi+ "TeV_ALLDECAYS_output.root").c_str());
-
-   //TFile *f = new TFile("/home/ethan/ClusteringAlgorithm_Suu5TeV_chi1p5TeV_ALLDECAYS_output.root");
-
+   TFile *f = new TFile( "/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_Zprime_output.root");
    
    //cut based
 
-   TFile outFile(("/home/ethan/Documents/rootFiles/signalRootFiles/ClusteringAlgorithm_MSuu" + sampleStringSuu+ "TeV-MChi"+sampleStringChi +"TeV_" +styleString +"_processed.root").c_str(),"RECREATE");
-   //TFile outFile("/home/ethan/ClusteringAlgorithm_Suu5TeV_chi1p5TeV_ALLDECAYS_processed.root","RECREATE");
-
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu4TeV-MChi1p5TeV_cutbased_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu6TeV-MChi2TeV_cutbased_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi2TeV_cutbased_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi3TeV_cutbased_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi1TeV_cutbased_output.root","RECREATE");
-
-
-   //NN based
-
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu5TeV-MChi1p5TeV_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu4TeV-MChi1p5TeV_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu6TeV-MChi2TeV_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi2TeV_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi3TeV_output.root","RECREATE");
-   //TFile outFile("/home/ethan/Documents/SuuToChiChi_MSuu8TeV-MChi1TeV_output.root","RECREATE");
+   TFile outFile("/home/ethan/Documents/rootFiles/processedRootFiles/ClusteringAlgorithm_generic_output.root","RECREATE");
 
    double dijetMassOne, dijetMassTwo;
-
-   //TCanvas *c1 = new TCanvas("c1","",600,20, 2500,2000);
-   // run this file four times, once for each of the different 2018 dataset pieces
 
    TTree *t1 = (TTree*)f->Get("clusteringAnalyzerAll/tree");   //need to change this to something relevenet
    const Int_t nentries = t1->GetEntries();
 
-   TH1F* h_SJ_mass_raw_clustering  = new TH1F("h_SJ_mass_raw_clustering","Reconstructed Superjet (VLQ) Mass; Events / 125 GeV ",40,0.,5000);
-   TH1F* h_SJ_mass_raw_dijet  = new TH1F("h_SJ_mass_raw_dijet","Reconstructed Superjet (VLQ) Mass; Events / 125 GeV ",40,0.,5000);
 
    TH2F *h_Mjet_vs_pTjet = new TH2F("h_Mjet_vs_pTjet","Jet Mass vs Jet pT; jet p_{T} [GeV];jet mass", 80,0, 4000, 50, 0, 2000);
 
    TH1F* h_SJ_ratio  = new TH1F("h_SJ_mass_ratio","Superjet Mass Ratio;M_{SJ1}/M_{SJ2}; Events",50,-2.5,2.5);
    TH1F* h_diSJ_SJ_mass_ratio  = new TH1F("h_diSJ_SJ_mass_ratio","M_{diSJ} / (M_{SJ1} + M_{SJ2})",50,0.,10);
 
-   TH1F* h_SJ_mass  = new TH1F("h_SJ_mass","Superjet (VLQ) Mass; Events / 125 GeV ",40,0.,5000);
-   TH1F* h_disuperjet_mass  = new TH1F("h_disuperjet_mass","diSuperjet (S_{uu}) Mass; Events / 200 GeV ",50,0.,10000);
+   TH1F* h_SJ_mass  = new TH1F("h_SJ_mass","Superjet (VLQ) Mass; Events / 125 GeV ",30,0.,1500);
+   TH1F* h_disuperjet_mass  = new TH1F("h_disuperjet_mass","diSuperjet (S_{uu}) Mass; Events / 200 GeV ",50,0.,6000);
 
-   TH1F* h_SJ_mass_SR  = new TH1F("h_SJ_mass_SR","Superjet (VLQ) Mass; Events / 125 GeV ",40,0.,5000);
 
    TH1F* h_MSJ1_MSJ2_ratio  = new TH1F("h_MSJ1_MSJ2_ratio","(M_{SJ_{1}} - M_{SJ_{2}})/(M_{SJ_{1}} + M_{SJ_{2}});",30,-3.,3.0);
    TH1F* h_MdiSJ_SJ12_ratios  = new TH1F("h_MdiSJ_SJ12_ratios","M_{diSJ} / (M_{SJ_{1}} + M_{SJ_{2}})",25,0.,5.0);
    TH2F *h_MSJ_mass_vs_MdSJ = new TH2F("h_MSJ_mass_vs_MdSJ","Anti-tagged event, tagged Superjet mass vs diSuperjet mass - MC Signal; diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
-  // TH2F *h_MSJ_mass_vs_MdSJ_SR = new TH2F( "h_MSJ_mass_vs_MdSJ_SR","Avg Double Tagged Superjet Mass vs diSuperjet mass - MC Signal; diSuperjet mass [GeV];avg superjet (VLQ) mass", 25,0, 10000, 20, 0, 6000);
-   TH2F *h_MSJ_mass_vs_MdSJ_SR = new TH2F( "h_MSJ_mass_vs_MdSJ_SR",("Avg Double Tagged (Cut-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
-   TH2F *h_MSJ_mass_vs_MdSJ_SRNN = new TH2F( "h_MSJ_mass_vs_MdSJ_SRNN",("Avg Double Tagged (NN-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
-   TH2F *h_MSJ_mass_vs_MdSJ_dijet = new TH2F("h_MSJ_mass_vs_MdSJ_dijet","Double Tagged Superjet mass vs diSuperjet mass (dijet technique); 4-jet mass [GeV];avg dijet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_DT = new TH2F( "h_MSJ_mass_vs_MdSJ_DT","Avg Double Tagged (Cut-based) Superjet Mass vs diSuperjet mass; diSuperjet mass [GeV];avg superjet (VLQ) mass", 25,0, 6000, 20, 0, 1500);
+   TH2F *h_MSJ_mass_vs_MdSJ_DTNN = new TH2F( "h_MSJ_mass_vs_MdSJ_DTNN",("Avg Double Tagged (NN-based) Superjet Mass vs diSuperjet mass - MC Signal (M_{S_{uu}} = "+ sampleStringSuu +", M_{chi} = "+sampleStringChi+ "); diSuperjet mass [GeV];avg superjet (VLQ) mass").c_str(), 25,0, 10000, 20, 0, 6000);
 
    TH1I* h_NN_categories = new TH1I("h_NN_categories","Superjet NN Categorizations; Events",5,0,5);
 
@@ -119,7 +87,7 @@ void readTreeMC()
    TH1I* h_SJ_nAK4_200_CR  = new TH1I("h_SJ_nAK4_200_CR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
    TH1F* h_SJ_mass_CR  = new TH1F("h_SJ_mass_CR","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 100 GeV",40,0.,4000);
    TH1F* h_disuperjet_mass_CR  = new TH1F("h_disuperjet_mass_CR","diSuperJet Mass (Control Region);Mass [GeV]; Events / 200 GeV",50,0.,10000);
-   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 25,0, 10000, 20, 0, 6000);
 
    TH1F* h_combinedNNScores  = new TH1F("h_combinedNNScores","Combined NN Scores (quadrature); NN Scores",40,0.,4.0);
    TH1F* h_cutDisc  = new TH1F("h_cutDisc","Cut-Based Discriminator; disc value",40,0.,8.0);
@@ -195,8 +163,7 @@ void readTreeMC()
 
    t1->SetBranchAddress("SJ1_mass_genParts", &SJ1_mass_genParts); 
    t1->SetBranchAddress("SJ2_mass_genParts", &SJ2_mass_genParts); 
-   t1->SetBranchAddress("fourAK8JetMass", &fourAK8JetMass); 
-   t1->SetBranchAddress("diAK8Jet_mass", &diAK8Jet_mass); 
+
    
    int totalEvents = 0;
    int nPreselected = 0;
@@ -217,58 +184,11 @@ void readTreeMC()
 
    int nControlRegion = 0;
    int nPassPreSelection = 0;
-
-   int nEventsWith4plusAK8 = 0;
-
-
-   //5 TeV Suu, 1p5 Tev chi
-   int nMassWindowClustering = 0;
-   int nMassWindowDijet = 0;
-
-   double upMassClustering = 1377+115;
-   double downMassClustering = 1377-115;
-   double upMassDijet = 1495+97.9 ;
-   double downMassDijet  = 1495-97.9;
-/*
-   //8 TeV Suu, 3 Tev chi
-   int nMassWindowClustering = 0;
-   int nMassWindowDijet = 0;
-
-   double upMassClustering = 2746+186;
-   double downMassClustering = 2746-186;
-   double upMassDijet = 2933+214 ;
-   double downMassDijet  = 2933-214;
-*/
-
    for (Int_t i=0;i<nentries;i++) 
    {  
 
       t1->GetEntry(i);
       totalEvents++;
-
-      if(  (  (superJet_mass[0]+superJet_mass[1])/2. > downMassClustering) && (  (superJet_mass[0]+superJet_mass[1])/2. <   upMassClustering   ) )nMassWindowClustering++;
-      if(  (  (diAK8Jet_mass[0]+diAK8Jet_mass[1])/2. > downMassDijet) && (  (diAK8Jet_mass[0]+diAK8Jet_mass[1])/2. <   upMassDijet   ) )nMassWindowDijet++;
-
-/*
-      if(diAK8Jet_mass[0] > 250.)
-      {
-         h_SJ_mass_raw_dijet->Fill(diAK8Jet_mass[0]);
-
-      } 
-      if(diAK8Jet_mass[1]>250.)
-      {
-         h_SJ_mass_raw_dijet->Fill(diAK8Jet_mass[1]);
-
-      } 
-      if(superJet_mass[0] > 250.)
-      {
-         h_SJ_mass_raw_clustering->Fill( superJet_mass[0]);
-      }   
-      if(superJet_mass[1] > 250.)
-      {
-         h_SJ_mass_raw_clustering->Fill( superJet_mass[1]);
-      }   
-   */
       h_MSJ1_vs_MSJ2_gen->Fill(SJ1_mass_genParts,SJ2_mass_genParts);
       h_SJ1_mass_genParts->Fill(SJ1_mass_genParts);
       h_SJ2_mass_genParts->Fill(SJ2_mass_genParts);
@@ -281,15 +201,14 @@ void readTreeMC()
       h_cutDisc->Fill(cutDisc);
       h_totalDisc->Fill(func(totHT,combinedNNScore,cutDisc));
 
-      
+      /*
       if( (nfatjets < 2) || (totHT < 1500.)     ) continue;
 
       if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
       {
          continue;
       } 
-
-      if( (superJet_mass[0] + superJet_mass[1])/2. < 500)continue;
+   */
       int nTightBTags = 0, nMedBTags = 0, nLooseBtags =0;
       for(int iii = 0;iii< nAK4; iii++)
       {
@@ -297,9 +216,6 @@ void readTreeMC()
          if ( (AK4_DeepJet_disc[iii] > medDeepCSV_DeepJet   )) nMedBTags++;
          if ( (AK4_DeepJet_disc[iii] > looseDeepCSV_DeepJet )) nLooseBtags++;
       }
-
-      if (nfatjets > 3)nEventsWith4plusAK8++;
-
       h_nTightBTags->Fill(nTightBTags);
       h_nMidBTags->Fill(nMedBTags);
       h_nLooseBTags->Fill(nLooseBtags);
@@ -333,19 +249,17 @@ void readTreeMC()
             }
             nControlRegion++;         
       }
+      h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+      h_disuperjet_mass->Fill(diSuperJet_mass);
 
+      h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+      h_SJ_mass->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
 
+      /*
       //signal region double tagging  CUT BASED
       if ( nTightBTags > 0)
       {
          nPreselected++;
-         h_MSJ_mass_vs_MdSJ_dijet->Fill(fourAK8JetMass, (diAK8Jet_mass[0]+diAK8Jet_mass[1])/2.);
-
-         h_SJ_mass->Fill( superJet_mass[0]);
-
-         //h_SJ_mass->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
-
-
 
          h_disuperjet_mass->Fill(diSuperJet_mass);
          if(  (SJ_nAK4_300[0]>=2) && (SJ_mass_100[0]>=400.)   )
@@ -353,7 +267,8 @@ void readTreeMC()
             if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
             {
                nDoubleTagged++;
-               h_MSJ_mass_vs_MdSJ_SR->Fill(diSuperJet_mass,( superJet_mass[1]+superJet_mass[0])/2.    );
+               h_MSJ_mass_vs_MdSJ_DT->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               h_SJ_mass->Fill( (superJet_mass[0]+superJet_mass[1])/2.   );
             }
          }
 
@@ -362,165 +277,19 @@ void readTreeMC()
                // double tagging NN based
          if(  (SJ1_decision<3) && (SJ2_decision<3)  )
          {
-            {
                nDoubleTaggedNN++;
-               h_MSJ_mass_vs_MdSJ_SRNN->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
+               h_MSJ_mass_vs_MdSJ_DTNN->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
 
-               //h_MSJ_mass_vs_MdSJ_SR->Fill(diSuperJet_mass,(    superJet_mass[1]+superJet_mass[0])/2    );
-            }
          }
 
       }
-
-
-
-
-
-
-      //    create a discriminator that is the ratio of the actual variable values and the requirements, then scale them based off of how important they are, then normalize
-
-
-
-      /*
-
-      
-
-      //anti-tagging
-      if(   (SJ_nAK4_50[0]<1) && (SJ_mass_100[0]<400.)   )
-      {
-         if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
-         {
-
-            h_MSJ_mass_vs_MdSJ->Fill(diSuperJet_mass,superJet_mass[1]);
-            nAntiTaggedTagged++;
-         }
-         nAntiTaggedEvents++;
-      }
-   */
+      */
 
    }
-   std::cout << "nControlRegion / nTotal : " << nControlRegion << "/" << nPassPreSelection << std::endl;
-
-  gStyle->SetOptStat(0);
-
-  /*
-   double Suu5TeV_chi2TeV_SF = 0.867;
-   h_SJ_ratio->Scale(Suu5TeV_chi2TeV_SF);
-   h_Mjet_vs_pTjet->Scale(Suu5TeV_chi2TeV_SF);
-   h_diSJ_SJ_mass_ratio->Scale(Suu5TeV_chi2TeV_SF);
-   h_MSJ_mass_vs_MdSJ->Scale(Suu5TeV_chi2TeV_SF);
-   h_MSJ_mass_vs_MdSJ_SR->Scale(Suu5TeV_chi2TeV_SF);
-
-   h_SJ_ratio->Draw("HIST");
-   c1->SaveAs("h_SJ_ratio.png");
-
-   h_Mjet_vs_pTjet->Draw("colz");
-   c1->SaveAs("h_Mjet_vs_pTjet.png");
-
-   h_diSJ_SJ_mass_ratio->Draw("HIST");
-   c1->SaveAs("h_diSJ_SJ_mass_ratio_MCSig.png");
-   
-   h_MSJ_mass_vs_MdSJ->GetYaxis()->SetTitleOffset(1.35);
-   h_MSJ_mass_vs_MdSJ->GetYaxis()->SetLabelSize(0.015);
-   h_MSJ_mass_vs_MdSJ->Draw("colz");
-   c1->SaveAs("h_MSJ_mass_vs_MdSJ_antiTag_sig.png");
-
-
-   h_SJ_mass->Draw("HIST");
-   c1->SaveAs( ("h_SJ_mass_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
-   
-   std::string binLabels[] = {"Ht","Wb","Zt","QCD","TTBar"};
-   for(int iii=0;iii<5;iii++)
-   {
-      h_NN_categories->GetXaxis()->SetBinLabel(iii+1,binLabels[iii].c_str());
-   }
-   h_NN_categories->SetMinimum(0.);
-   h_NN_categories->Draw();
-   //c1->SaveAs(  ("h_NN_categories_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str()   );
-   c1->SaveAs(  "h_NN_categories_nonres.png"  );
-
-
-   h_nTightBTags->Draw();
-   c1->SaveAs("h_nTightBTags.png");
-   h_nMidBTags->Draw();
-   c1->SaveAs("h_nMidBTags.png");
-   h_nLooseBTags->Draw();
-   c1->SaveAs("h_nLooseBTags.png");
-
-
-
-
-
-
-
-   h_MSJ_mass_vs_MdSJ_CR->Draw("colz");
-   c1->SaveAs("h_MSJ_mass_vs_MdSJ_CR_sig.png");
-
-   h_MSJ_mass_vs_MdSJ_SR->GetYaxis()->SetTitleOffset(1.35);
-   h_MSJ_mass_vs_MdSJ_SR->GetYaxis()->SetLabelSize(0.015);
-   h_MSJ_mass_vs_MdSJ_SR->Draw("colz");
-
-   auto legend = new TLegend(0.2,0.55,0.45,0.65);
-   legend->SetHeader("","C"); // option "C" allows to center the header
-   legend->AddEntry(h_MSJ_mass_vs_MdSJ_SR,("M_{S_{uu}}=" +sampleStringSuu + " TeV, M_{chi} =" + sampleStringChi+ " TeV").c_str() ,"f" );
-   legend->Draw();
- 
-   c1->SaveAs( ("h_MSJ_mass_vs_MdSJ_SR_sig_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
-
-
-
-
-   h_combinedNNScores->Draw("HIST");
-   c1->SaveAs( ("h_combinedNNScores_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
-
-
-   h_cutDisc->Draw("HIST");
-   c1->SaveAs( ("h_cutDisc_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
-
-
-   h_totalDisc->Draw("HIST");
-   c1->SaveAs( ("h_totalDisc_Suu"+ sampleStringSuu+"_chi"+sampleStringChi + ".png").c_str() );
-
-   */
-
-   std::cout << "nTotalEvents / nPreselected / nDoubleTagged : " << totalEvents << "/" << nPreselected << "/" << nDoubleTagged<<  std::endl;
-   std::cout << "nTotalEvents / number with 4+ AK4 jets: " << totalEvents << "/" << nEventsWith4plusAK8 <<  std::endl;
-   
-   std::cout << "ndoubletagged NN based: " << nDoubleTaggedNN << std::endl;
-
-
-   std::cout << "number in mass window of cluster/dijet: " <<nMassWindowClustering << "/" << nMassWindowDijet<< std::endl;
-   std::cout << "Giving clustering/dijet reconstruction efficiencies of: " << 1.0*nMassWindowClustering/3309.<< "/" <<1.0*nMassWindowDijet/3309. << std::endl; 
    outFile.Write();
 
 
 }
-
-
-// 5 TeV Suu, 2 TeV chi -> SF = 0.867, 276 events * 0.867 = 239 events making it into strictly anti-tagged region out of 34883 events = 0.685% of events in control region
-// 276 / 3338 = 8.3% mis-anti-tagged
-
-
-//There are 3338 total events, with 97 anti-tagged, and of these events there are 82 with second superjet tagged   -> 2.91% events of total, 2.45% have tagged second SJ
-
-//look for sig/sqrt(N)
-//give up on high-mass Suu 
-
-
-
-//notes from Suu meeting 
-   //do optimization for CR
-      //frank said to use cut on leading AK4 bdisc
-   //make plot of SJ vs diSJ for sig vs BR for NN and cut based approach
-   // do adaptive approach to "phase" out NN for high HT
-   // flattened QCD ? how do we get this
-
-
-
-
-//weird scaling between NN and cut-based? should these be normalized to the same value? 
-   // not so easy because then you need a new normalization for each mass point ( or need to redefine the discriminator )
-
 
 
 

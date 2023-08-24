@@ -10,7 +10,7 @@ import csv
 hadFrag = "https://raw.githubusercontent.com/cms-sw/genproductions/master/genfragments/ThirteenTeV/Hadronizer/Hadronizer_TuneCP5_13TeV_generic_LHE_pythia8_PSweights_cff.py"
 generator = "madgraph"
 datasetNamePrefix = "SuuToChiChi_"
-datasetNameSuffix = "TuneCP5_13TeV_pythia8_PSweights"
+datasetNameSuffix = "TuneCP5_13TeV-madgraph-pythia8"
 # 0 = WbWb, 1 = WbZt, 2 = Wbht. 3 = htZt, 4 = ZtZt, 5 = htht
 cardPaths = ["https://github.com/cms-sw/genproductions/tree/master/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/SuuToChiChi_FullyHadronic_WbWb",
 "https://github.com/cms-sw/genproductions/tree/master/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/SuuToChiChi_FullyHadronic_ZtZt",
