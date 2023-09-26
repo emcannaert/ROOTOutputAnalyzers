@@ -94,10 +94,10 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    TH1I* h_SJ_nAK4_200_CR  = new TH1I("h_SJ_nAK4_200_CR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Control Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
    TH1F* h_SJ_mass_CR  = new TH1F("h_SJ_mass_CR","SuperJet Mass (Control Region) ;Mass [GeV]; Events / 125 GeV",40,0.,5000);
    TH1F* h_disuperjet_mass_CR  = new TH1F("h_disuperjet_mass_CR","diSuperJet Mass (Control Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
-   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_CR = new TH2F("h_MSJ_mass_vs_MdSJ_CR","Double Tagged Superjet mass vs diSuperjet mass (Control Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3500);  /// 375 * 125
 
    // TTbar control region
-   TH2F *h_MSJ_mass_vs_MdSJ_CRTTbar = new TH2F("h_MSJ_mass_vs_MdSJ_CRTTbar","Double Tagged Superjet mass vs diSuperjet mass (TTbar Control Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_CRTTbar = new TH2F("h_MSJ_mass_vs_MdSJ_CRTTbar","Double Tagged Superjet mass vs diSuperjet mass (TTbar Control Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3500);  /// 375 * 125
 
 
    // Signal regions stuff
@@ -105,9 +105,9 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    TH1I* h_SJ_nAK4_200_SR = new TH1I("h_SJ_nAK4_200_SR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Signal Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
    TH1F* h_SJ_mass_SR  = new TH1F("h_SJ_mass_SR","SuperJet Mass (Signal Region) ;Mass [GeV]; Events / 100 GeV",40,0.,5000);
    TH1F* h_disuperjet_mass_SR  = new TH1F("h_disuperjet_mass_SR","diSuperJet Mass (Signal Region);Mass [GeV]; Events / / 400 GeV",25,0.,10000);
-   TH2F *h_MSJ_mass_vs_MdSJ_SR = new TH2F("h_MSJ_mass_vs_MdSJ_SR","Double Tagged Superjet mass vs diSuperjet mass (Signal Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_SR = new TH2F("h_MSJ_mass_vs_MdSJ_SR","Double Tagged Superjet mass vs diSuperjet mass (Signal Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3500);  /// 375 * 125
 
-   TH2F *h_MSJ_mass_vs_MdSJ_dijet = new TH2F("h_MSJ_mass_vs_MdSJ_dijet","Double Tagged Superjet mass vs diSuperjet mass (dijet technique); 4-jet mass [GeV];avg dijet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
+   TH2F *h_MSJ_mass_vs_MdSJ_dijet = new TH2F("h_MSJ_mass_vs_MdSJ_dijet","Double Tagged Superjet mass vs diSuperjet mass (dijet technique); 4-jet mass [GeV];avg dijet mass", 22,1250., 9500, 20, 500, 3500);  /// 375 * 125
 
 
    TH1I* h_nLooseBTags = new TH1I("h_nLooseBTags","Number of Loosely b-tagged AK4 Jets; Events",10,-0.5,9.5);
@@ -594,73 +594,42 @@ void readTreeMCBR()
    double nDoubleTaggedCR = 0;
    double NNDoubleTag = 0;
    double nDoubleTaggedCRNN = 0;
-   std::string dataYear = "2018";
+   std::vector<std::string> dataYears = {"2015","2016","2017","2018"};
 
    if(includeTTBar && allHTBins)  /// make sure you are
    {
-      double eventScaleFactors[3] = {0.6042726685,0.2132134533,0.06588049107};//,0.03616639075,0.04563489275};
-//     double eventScaleFactors[4] = {4.289571744,0.6042726685,0.2132134533,0.06588049107};//,0.03616639075,0.04563489275};
-
-      std::vector<std::string> inFileNames = {//"/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1000to1500_SKIMMED.root",
-                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED.root",
-                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED.root",
-                                            "/home/ethan/Documents/rootFiles/skimmedRootFiles/TTToHadronic_SKIMMED.root"};//,
-                                            //"/home/ethan/Documents/rootFiles/skimmedRootFiles/TTTo2l2nu_SKIMMED.root",
-                                            //"/home/ethan/Documents/rootFiles/skimmedRootFiles/TTtoSemiLeptonic_SKIMMED.root" };
-      std::vector<std::string> outFileNames = {//"/home/ethan/Documents/QCD_HT1000to1500_processed.root",
-                                            "/home/ethan/Documents/rootFiles/processedRootFiles/QCD_HT1500to2000_processed.root",
-                                            "/home/ethan/Documents/rootFiles/processedRootFiles/QCD_HT2000toInf_processed.root",
-                                            "/home/ethan/Documents/rootFiles/processedRootFiles/TTToHadronic_processed.root"};//,
-                                            //"/home/ethan/Documents/TTTo2l2nu_processed.root",
-                                            //"/home/ethan/Documents/TTtoSemiLeptonic_processed.root" };
-      for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
+      int yearNum = 0;
+      for(auto dataYear = dataYears.begin(); dataYear < dataYears.end();dataYear++ )
       {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii],dataYear );
+         double eventScaleFactors[4][4] = {  {1.0,1.0,1.0}, {1.0,1.0,1.0}, {1.0,1.0,1.0},{1.0,1.0,1.0}   }; //TODO
+
+         std::vector<std::string> inFileNames = {
+                                                 ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC_HT1000to1500_" + *dataYear +"_SKIMMED.root").c_str(),
+                                                 ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC_HT1500to2000_" + *dataYear +"_SKIMMED.root").c_str(),
+                                                  ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC_HT2000toInf_" + *dataYear +"_SKIMMED.root").c_str(),
+                                                  ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/TTTohadronic_" + *dataYear +"_SKIMMED.root").c_str()
+                                               };
+         std::vector<std::string> outFileNames = {
+                                                 ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *dataYear +"_processed.root").c_str(),
+                                                 ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *dataYear +"_processed.root").c_str(),
+                                                  ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_" + *dataYear +"_processed.root").c_str(),
+                                                  ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *dataYear +"_processed.root").c_str()
+                                               };
+         for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
+         {
+            doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[yearNum][iii], *dataYear );
+         }
+         std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
+         std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
+
+         std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
+
+         std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
+         yearNum++;
       }
-      std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
-      std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
 
-      std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
-
-      std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
    }
-   else if( !includeTTBar && allHTBins)
-   {
-      double eventScaleFactors[3] = {4.289571744,0.6042726685,0.2132134533};
-
-      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1000to1500_SKIMMED_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT1500to2000_SKIMMED_"+ dataYear + ".root").c_str(),("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_"+ dataYear + ".root").c_str()};
-
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/processedRootFiles/QCD_HT1000to1500_processed"+ dataYear + ".root").c_str(),("/home/ethan/Documents/processedRootFiles/QCD_HT1500to2000_processed"+ dataYear + ".root").c_str(),("/home/ethan/Documents/processedRootFiles/QCD_HT2000toInf_processed"+ dataYear + ".root").c_str()};
-      for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
-      {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii],dataYear );
-      }
-      std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
-      std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
-
-      std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
-
-      std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
-   }
-   else
-   {
-      double eventScaleFactors[1] = {0.2132134533};
-
-      std::vector<std::string> inFileNames = {("/home/ethan/Documents/rootFiles/skimmedRootFiles/QCD_HT2000toInf_SKIMMED_"+ dataYear + ".root").c_str()};
-
-      std::vector<std::string> outFileNames = {("/home/ethan/Documents/processedRootFiles/QCD_HT2000toInf_processed"+ dataYear + ".root").c_str()};
-      for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
-      {
-         doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[iii],dataYear );
-      }
-      std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
-      std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
-
-      std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
-
-      std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
-   }
-
+      
 }
 
 
