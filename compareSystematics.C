@@ -4,7 +4,6 @@
 #include "TRatioPlot.h"
 #include "THStack.h"
 #include <string>
-#include <TH2F>
 using namespace std;
 
 // creates the root file that will be given to combine, here using an 8 TeV Suu and 3 TeV chi with QCD and TTbar MC as BRs. Not sure what to do with data ...
@@ -19,7 +18,7 @@ void compareSystematics()
   TFile *f1 = new TFile("/home/ethan/Documents/rootFiles/processedRootFiles/ClusteringAlgorithmBR_JECup_output_processed.root");
   TFile *f2 = new TFile("/home/ethan/Documents/rootFiles/processedRootFiles/ClusteringAlgorithmBR_data_output_processed.root"); 
   TFile *f3 = new TFile("/home/ethan/Documents/rootFiles/processedRootFiles/ClusteringAlgorithmBR_JECdown_output_processed.root");
-
+ 
   //c1->SetLogy();
   TH1F *  h_JECup   = (TH1F*)f1->Get("h_SJ_mass_JEC");
   TH1F *  h_JECnom  = (TH1F*)f2->Get("h_SJ_mass_JEC");
@@ -39,6 +38,5 @@ void compareSystematics()
   h_JECdown->Draw("SAME");
 
   c1->SaveAs("h_JEC_upNomDown.png"); 
-
 
 }
