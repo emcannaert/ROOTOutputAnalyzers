@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void doThings(std::string inFileName, std::string outFileName, double& nEvents,double &nHTcut,  double &nAK8JetCut, double &nHeavyAK8Cut,double &nBtagCut,double &nDoubleTagged, double &eventScaleFactors)
+void doThings(std::string inFileName, std::string outFileName, double& nEvents,double &nHTcut,  double &nAK8JetCut, double &nHeavyAK8Cut,double &nBtagCut,double &nDoubleTagged, double &eventScaleFactors, std::string systematic)
 {
 
    double totHT, dijetMassOne, dijetMassTwo;
@@ -17,7 +17,12 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents,d
    const char *_outFilename = outFileName.c_str();
 
    TFile outFile(_outFilename,"RECREATE");
-   
+
+
+
+   // this needs to be changed to look for the systematics
+
+
    TTree *t1 = (TTree*)f->Get("clusteringAnalyzerAll/tree_");   // TO do 
    auto *t2 = t1->CloneTree(0);
    t2->SetName("skimmedTree");
@@ -81,6 +86,8 @@ void readTreeApplySelection()
                                                //"/home/ethan/Documents/TTTo2l2nu_combine_cutbased_SKIMMED.root",
                                                //"/home/ethan/Documents/TTtoSemiLeptonic_SKIMMED.root" };
      
+         std::vector<std::string> systematic = { "JEC", "JER", "nom"};
+
          for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
          {
             doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,eventScaleFactors[iii]);
