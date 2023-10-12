@@ -31,7 +31,7 @@ def get_file_info(file_name):
 if __name__=="__main__":
 
 
-	c = ROOT.TCanvas("c", "canvas", 1000, 1050)
+	c = ROOT.TCanvas("c", "canvas", 1200, 1000)
 
 	#create canvas 
 	plot_home = "/home/ethan/Documents/plots/systematicPlots"
@@ -82,7 +82,7 @@ if __name__=="__main__":
 				SJ_nom_hist.SetLineWidth(3)
 				
 				SJ_up_hist.SetTitle("Effect of %s on %s %s Superjet Mass"%(systematic,year_str,sample_str ))
-				SJ_up_hist.GetYaxis().SetTitleOffset(1.72);
+				SJ_up_hist.GetYaxis().SetTitleOffset(1.58);
 				SJ_up_hist.GetXaxis().SetTitle("avg superjet mass [GeV]");
 				SJ_up_hist.Draw("HIST")
 				SJ_down_hist.Draw("SAME")
@@ -146,7 +146,7 @@ if __name__=="__main__":
 				diSJ_nom_hist.SetLineWidth(3)
 				
 				diSJ_up_hist.SetTitle("Effect of %s on %s %s diSuperjet Mass"%(systematic,year_str,sample_str ))
-				diSJ_up_hist.GetYaxis().SetTitleOffset(1.72);
+				diSJ_up_hist.GetYaxis().SetTitleOffset(1.58);
 				diSJ_up_hist.GetXaxis().SetTitle(" diSuperjet mass [GeV]");
 				diSJ_up_hist.Draw("HIST")
 				diSJ_down_hist.Draw("SAME")

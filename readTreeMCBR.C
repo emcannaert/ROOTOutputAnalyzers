@@ -38,6 +38,8 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    double _eventWeightPU,_puWeightDown,_puWeightUp;
    int eventTTbarCRFlag =0;
    
+   double bTag_eventWeight_up,bTag_eventWeight_nom,bTag_eventWeight_down;
+   double PU_eventWeight_up,PU_eventWeight_nom,PU_eventWeight_down;
    int nEventsTTbarCR = 0;   
    ////////////////////////////   btag SF variables //////////////////////
    int _eventNumBTag,_eventNumPU, _nAK4;
@@ -122,7 +124,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       TH1I* h_SJ_nAK4_100_SR  = new TH1I("h_SJ_nAK4_100_SR","Number of Reclustered AK4 Jets (E_{COM} > 100 GeV) per SJ (Signal Region);nAK4 Jets (E_{COM} > 100 GeV); Events",10,-0.5,9.5);
       TH1I* h_SJ_nAK4_200_SR = new TH1I("h_SJ_nAK4_200_SR","Number of Reclustered AK4 Jets (E_{COM} > 200 GeV) per SJ (Signal Region);nAK4 Jets (E_{COM} > 200 GeV); Events",10,-0.5,9.5);
       TH1F* h_SJ_mass_SR  = new TH1F("h_SJ_mass_SR","SuperJet Mass (Signal Region) ;Mass [GeV]; Events / 100 GeV",40,0.,5000);
-      TH1F* h_disuperjet_mass_SR  = new TH1F("h_disuperjet_mass_SR","diSuperJet Mass (Signal Region);Mass [GeV]; Events / / 400 GeV",25,0.,10000);
+      TH1F* h_disuperjet_mass_SR  = new TH1F("h_disuperjet_mass_SR","diSuperJet Mass (Signal Region);Mass [GeV]; Events / 400 GeV",25,0.,10000);
       TH2F *h_MSJ_mass_vs_MdSJ_SR = new TH2F("h_MSJ_mass_vs_MdSJ_SR","Double Tagged Superjet mass vs diSuperjet mass (Signal Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
 
       TH2F *h_MSJ_mass_vs_MdSJ_dijet = new TH2F("h_MSJ_mass_vs_MdSJ_dijet","Double Tagged Superjet mass vs diSuperjet mass (dijet technique); 4-jet mass [GeV];avg dijet mass", 22,1250., 9500, 20, 500, 3000);  /// 375 * 125
@@ -133,6 +135,15 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       TH1I* h_nTightBTags = new TH1I("h_nTightBTags","Number of Tightly b-tagged AK4 Jets; Events",10,-0.5,9.5);
 
 
+
+      ////////////////// event weight stuff ///////////////////////////
+      TH1F* h_bTag_eventWeight_up  = new TH1F( "h_bTag_eventWeight_up",("b-tagging event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_bTag_eventWeight_nom  = new TH1F( "h_bTag_eventWeight_nom",("b-tagging event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_bTag_eventWeight_down  = new TH1F( "h_bTag_eventWeight_down",("b-tagging event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+
+      TH1F* h_PU_eventWeight_up  = new TH1F( "h_PU_eventWeight_up",("Pileup event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_PU_eventWeight_nom  = new TH1F( "h_PU_eventWeight_nom",("Pileup event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_PU_eventWeight_down  = new TH1F( "h_PU_eventWeight_down",("Pileup event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
 
       /////////////more for verifying the CR //////////////////////////////////////
       TH1F* h_AK8_jet_mass_SR  = new TH1F("h_AK8_jet_mass_SR","AK8 Jet Mass (SR region);Mass [GeV]; Events / 30 5GeV",50,0.,1500);
@@ -275,6 +286,17 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       t1->SetBranchAddress("fourAK8JetMass", &fourAK8JetMass); 
       t1->SetBranchAddress("diAK8Jet_mass", &diAK8Jet_mass); 
 
+      // event weight stuff
+      t1->SetBranchAddress("bTag_eventWeight_up", &bTag_eventWeight_up); 
+      t1->SetBranchAddress("bTag_eventWeight_nom", &bTag_eventWeight_nom); 
+      t1->SetBranchAddress("bTag_eventWeight_down", &bTag_eventWeight_down); 
+
+      t1->SetBranchAddress("PU_eventWeight_up", &PU_eventWeight_up); 
+      t1->SetBranchAddress("PU_eventWeight_nom", &PU_eventWeight_nom); 
+      t1->SetBranchAddress("PU_eventWeight_down", &PU_eventWeight_down); 
+
+
+
    /*
 
       //////////////////////btag SF variables/////////////////////
@@ -320,35 +342,20 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
          h_nAK4->Fill(nAK4);
 
 
+         // Fill pileup and btag event weights 
+         h_bTag_eventWeight_up->Fill(bTag_eventWeight_up);
+         h_bTag_eventWeight_nom->Fill(bTag_eventWeight_nom);
+         h_bTag_eventWeight_down->Fill(bTag_eventWeight_down);
+
+         h_PU_eventWeight_up->Fill(PU_eventWeight_up);
+         h_PU_eventWeight_nom->Fill(PU_eventWeight_nom);
+         h_PU_eventWeight_down->Fill(PU_eventWeight_down);
+
 
 
          /////////////////////////////////////////////////////////////////////////////////
          ///////make sure event matches from analyzer matches event from btagSF tree//////
          double eventWeightToUse = 1.0;
-         /*
-         double epsilon = 1e-8;
-         int jetsMatch = 1;
-         if((eventnum == _eventNumBTag) && (nAK4 == _nAK4) ) 
-         {
-            for(int iii =0;iii<nAK4;iii++)
-            {
-               if( abs(AK4_pt[iii]-_AK4_pt[iii]) > epsilon)jetsMatch*=0;
-            }
-            if(jetsMatch > 0)
-            {
-               eventWeightToUse *=_eventWeightBTag;
-               //eventWeightToUse *=_eventNumPU;
-            }
-            else { std::cout << "bad event - AK4 jet pt does not match ... " << std::endl;}
-         }  
-         else
-         {
-            std::cout << "something didnt match: eventnums: " << eventnum << "/" << _eventNumBTag << "/" <<  " nAK4: " << nAK4 << "/" << _nAK4 << std::endl;
-         }
-         */
-         
-         /////////////////////////////////////////////////////////////////////////////////
-         /////////////////////////////////////////////////////////////////////////////////
 
          eventnum++;
          //int _nAK4 = 0;
@@ -583,7 +590,7 @@ void readTreeMCBR()
 
             double eventScaleFactors[4][4] = {  {1.0,1.0,1.0}, {1.0,1.0,1.0}, {1.0,1.0,1.0},{1.0,1.0,1.0}   }; //TODO  +   
 
-            std::vector<std::string> inFileNames = {  "/home/ethan/Documents/rootFiles/skimmedRootFiles/TTToHadronic_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root"
+            std::vector<std::string> inFileNames = {  "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCDMC2000toInf_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root"
 
  
                                                    /*       TESTING
@@ -592,7 +599,7 @@ void readTreeMCBR()
                                                      ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC_HT2000toInf_" + *dataYear "_"+ systematic_str+"_SKIMMED.root").c_str(),
                                                      ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/TTTohadronic_" + *dataYear "_"+ systematic_str+"_SKIMMED.root").c_str() */
                                                   };
-            std::vector<std::string> outFileNames = {  "/home/ethan/Documents/rootFiles/processedRootFiles/TTToHadronic_"+ *dataYear+ "_" + *systematic + "_processed.root"
+            std::vector<std::string> outFileNames = {  "/home/ethan/Documents/rootFiles/processedRootFiles/QCDMC2000toInf_"+ *dataYear+ "_" + *systematic + "_processed.root"
                                                       /*       TESTING
                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *dataYear "_"+ systematic_str+"_processed.root").c_str(),
                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *dataYear "_"+ systematic_str+"_processed.root").c_str(),
