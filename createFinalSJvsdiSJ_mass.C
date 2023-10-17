@@ -60,10 +60,10 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
     TH2F *h_MSJ_mass_vs_MdSJ_SR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_SR");
     TH2F *h_MSJ_mass_vs_MdSJ_SR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_SR");
 
-    ///h_MSJ_mass_vs_MdSJ_SR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
-    //h_MSJ_mass_vs_MdSJ_SR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
-    //h_MSJ_mass_vs_MdSJ_SR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
-    //h_MSJ_mass_vs_MdSJ_SR_TTbar->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTbar->Scale(TTToHadronic_SF[yearCount]);
 
 
 
@@ -191,12 +191,12 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
     TH2F *h_MSJ_mass_vs_MdSJ_CR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_CR");
     TH2F *h_MSJ_mass_vs_MdSJ_CR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_CR");
 
-    /*
+
     h_MSJ_mass_vs_MdSJ_CR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_TTbar->Scale(TTToHadronic_SF[yearCount]);
-    */
+
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_CR_1000to1500);
@@ -321,12 +321,12 @@ void make_statUncertainty_mass_plots_SR_sameDatasets()
     TH2F *h_MSJ_mass_vs_MdSJ_SR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_SR");
     TH2F *h_MSJ_mass_vs_MdSJ_SR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_SR");
 
-    /*
+
     h_MSJ_mass_vs_MdSJ_SR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_TTbar->Scale(TTToHadronic_SF[yearCount]);
-    */
+
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_SR_1000to1500);
@@ -406,12 +406,12 @@ void make_statUncertainty_mass_plots_CR_sameDatasets()
     TH2F *h_MSJ_mass_vs_MdSJ_CR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_CR");
 
 
-    /*
+
     h_MSJ_mass_vs_MdSJ_CR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_TTbar->Scale(TTToHadronic_SF[yearCount]);
-    */
+
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_CR_1000to1500);

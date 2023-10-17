@@ -6,7 +6,7 @@ from random import uniform, shuffle
 import pdb
 import time
 from histInfo import histInfo
-
+from print_nice_hist import print_nice_hist
 ####  calculateStatisticalUncertaintyBins.py
 ####  written by Ethan Cannaert, 24 September 2023
 ####  opens up a TH2 (22x20 bins, avg superjet mass vs diSuperjet mass)
@@ -26,6 +26,8 @@ class combineHistBins:
 		self.all_hist_values = histInfo.histInfo(year,region) ## everywhere there is originally a sqrt, will need to call get_bin_total_uncert and get 
 		self.superbin_indices = self.init_superbin_indices()     
 		
+		self.plot_before_syst_plot()   # plot the "before" image of counts and syst uncertainty 
+
 		print("Starting the process of merging bins.")
 		self.do_bin_merging()
 		print("Finished with bin merging.")
@@ -314,16 +316,9 @@ class combineHistBins:
 
 	def fill_in_holes(self):
 
-
-
-		### This won't completely work, best way to do this is to find the perimeter bin numbers and make sure everything within that in a row/column is filled
-
-
 		## loop over all rows 
-
 		# fill in holes within each superjet
 
-		# how to find larger holes inside histogram'
 		#for each row and column, store the max and min bin index 
 		maxBin_row     = combineHistBins.n_bins_x*[-9999]  #index refers to the maximum row index for column with this index
 		maxBin_column = combineHistBins.n_bins_y*[-9999]  #index refers to the maximum column index for row with this index 
@@ -333,14 +328,6 @@ class combineHistBins:
 
 		# go through all superbins, find these max indices for each row
 		# go through the superbins, find any empty superbins with indices less than this and add them to adjacent non-empty superbins with fewest counts
-
-
-		"""for iii in range(0, combineHistBins.n_bins_x):
-			for jjj in range(0,combineHistBins.n_bins_y):
-				if 
-		"""
-
-		## not working 
 
 		for superbin_index,superbin in enumerate(self.superbin_indices):
 			for _tuple in superbin:
@@ -543,7 +530,23 @@ class combineHistBins:
 			all_bins_good = self.all_bins_are_good()
 		return
 	
-	
+	def plot_before_syst_plot(self):
+		# go over all_hist_values and plot them
+		plot_path = "/Users/ethan/Documents/plots/statUncertaintyPlotsAlt/preMergedPlots/"
+		self.hist_values
+		hist_expected_counts_unmerged = ROOT.TH2F("hist_expected_counts_unmerged_%s_%s"%(region,year), ("Expected Background bin in the %s (%s); diSuperjet mass (GeV); avg superjet mass (GeV)"%(region, year)), 22,1250., 9500, 20, 500, 3500)  # 375 * 125
+		for iii in range(0, combineHistBins.n_bins_x):
+			for jjj in range(0, combineHistBins.n_bins_y):
+				hist_expected_counts_unmerged.SetBinContent(iii,jjj, self.counts_in_superbin(self.get_superbin_number( (iii,jjj))))
+
+		hist_unmerged_systUncert = ROOT.TH2F("hist_unmerged_systUncert_%s_%s"%(region,year), ("Systematic Uncertainty per bin in the %s (%s); diSuperjet mass (GeV); avg superjet mass (GeV)"%(region, year)), 22,1250., 9500, 20, 500, 3500)  # 375 * 125
+
+		for superbin in self.superbin_indices:
+			for _tuple in superbin:
+				hist_unmerged_systUncert.SetBinContent(_tuple[0],_tuple[1],self.all_hist_values.get_bin_total_uncert(superbin))
+		print_nice_hist.print_nice_hist(hist_expected_counts_unmerged,plot_path, hist_expected_counts_unmerged.GetName(),"colz")
+		print_nice_hist.print_nice_hist(hist_unmerged_systUncert, plot_path,hist_unmerged_systUncert.GetName(),"colz")
+		return
 if __name__=="__main__":
 	print("Calculating bin groupings for best statistical uncertainties")
 	out_txt_file = open("/Users/ethan/Documents/rootFiles/statisticalUncertaintyStudyAlt/txtfiles/superbin_indices.txt","w")

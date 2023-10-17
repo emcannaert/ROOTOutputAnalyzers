@@ -1,5 +1,4 @@
 import sys,os,time
-from histInfo import histInfo
 import ROOT
 import ast
 
