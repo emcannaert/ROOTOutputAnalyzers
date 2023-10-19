@@ -17,7 +17,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents,d
 
    TFile outFile(_outFilename,"RECREATE");
    
-   TTree *t1 = (TTree*)f->Get("clusteringAnalyzerAll_/tree_");   // TO do 
+   TTree *t1 = (TTree*)f->Get("clusteringAnalyzerAll_/tree_");   // TODO
    auto *t2 = t1->CloneTree(0);
    t2->SetName("skimmedTree");
 

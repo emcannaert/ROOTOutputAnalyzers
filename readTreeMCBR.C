@@ -275,9 +275,38 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
    double medDeepCSV   = 0.4184;
    double tightDeepCSV = 0.7527;
    int passHTandAK8 = 0;
-   double looseDeepCSV_DeepJet = 0.0490;
-   double medDeepCSV_DeepJet   = 0.2783;
-   double tightDeepCSV_DeepJet = 0.7100;
+
+   double looseDeepCSV_DeepJet; = 0.0490;
+   double medDeepCSV_DeepJet;   = 0.2783;
+   double tightDeepCSV_DeepJet; = 0.7100;
+
+   if(dataYear == "2015")
+   {
+      looseDeepCSV_DeepJet; = 0.0490;
+      medDeepCSV_DeepJet;   = 0.2783;
+      tightDeepCSV_DeepJet; = 0.7100;
+   }
+   else if(dataYear == "2016")
+   {
+      looseDeepCSV_DeepJet; = 0.0490;
+      medDeepCSV_DeepJet;   = 0.2783;
+      tightDeepCSV_DeepJet; = 0.7100;
+   }
+   else if(dataYear == "2017")
+   {
+      looseDeepCSV_DeepJet; = 0.0490;
+      medDeepCSV_DeepJet;   = 0.2783;
+      tightDeepCSV_DeepJet; = 0.7100;
+   }
+   else if(dataYear == "2018")
+   {
+      looseDeepCSV_DeepJet; = 0.0490;
+      medDeepCSV_DeepJet;   = 0.2783;
+      tightDeepCSV_DeepJet; = 0.7100;
+   }
+   // this is outdated ...
+
+
 
    for (Int_t i=0;i<nentries;i++) 
    {  
@@ -287,7 +316,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
       nHTcut+=eventScaleFactor;
       if( (nfatjets < 3) ) continue;
       nAK8JetCut+=eventScaleFactor;
-      if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassTwo < 1000.)  ))
+      if ((nfatjet_pre < 2) && ( (dijetMassOne < 1000. ) || ( dijetMassOne < 1000.)  ))
       {
          continue;
       } 
@@ -584,16 +613,7 @@ void readTreeMCBR()
 {
    bool includeTTBar = true;
    bool allHTBins    = true;
-   double nEvents = 0;
-   double nHTcut  = 0;
-   double nAK8JetCut = 0;
-   double nHeavyAK8Cut = 0;
-   double nBtagCut = 0;
-   double nDoubleTagged = 0;
-   double nNoBjets = 0;
-   double nDoubleTaggedCR = 0;
-   double NNDoubleTag = 0;
-   double nDoubleTaggedCRNN = 0;
+
    std::vector<std::string> dataYears = {"2015","2016","2017","2018"};
 
    if(includeTTBar && allHTBins)  /// make sure you are
@@ -617,12 +637,24 @@ void readTreeMCBR()
                                                };
          for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
          {
-            doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[yearNum][iii], *dataYear );
-         }
-         std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
-         std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
 
-         std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
+            double nEvents = 0;
+            double nHTcut  = 0;
+            double nAK8JetCut = 0;
+            double nHeavyAK8Cut = 0;
+            double nBtagCut = 0;
+            double nDoubleTagged = 0;
+            double nNoBjets = 0;
+            double nDoubleTaggedCR = 0;
+            double NNDoubleTag = 0;
+            double nDoubleTaggedCRNN = 0;
+            doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactors[yearNum][iii], *dataYear );
+            std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
+            std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
+
+            std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
+         }
+
 
          std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
          yearNum++;
