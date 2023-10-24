@@ -1,19 +1,52 @@
 import ROOT
 import os, sys
 import glob
-
+from get_file_info import get_file_info
 ### print_nice_hist.py
 ### Written by Ethan Cannaert, October 2023
 
 # takes in a ROOT histogram, plot output path, name you want the plot png to be called, and drawing options and prints the histogram with nice formatting
 
-def print_nice_hist(hist, plotpath,hist_name, option=""):
-	c = ROOT.TCanvas("c", "canvas", 1200, 1000)
-	if option == "":
+def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-", xlow="-",xhigh="-", ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-", canvasy = "-"):
+	c = None
+	if canvasy != "-" and canvasx != "-":
+
+		c = ROOT.TCanvas("c", "canvas", int(canvasx), int(canvasy))
+	else:
+		c = ROOT.TCanvas("c", "canvas", 1200, 1000)
+
+	year_str,sample_str,syst_str = get_file_info.get_file_info(hist_file_path)
+	if hist_title != "-":
+		new_title = " ".join(hist_title.split("/"))
+		if syst_str != "":
+			hist.SetTitle("%s (%s) (%s) (%s)"%(new_title, sample_str, syst_str, year_str ))
+		else:
+			hist.SetTitle("%s (%s) (%s)"%(new_title, sample_str, year_str ))
+	if xtitle != "-":
+		new_xtitle = " ".join(xtitle.split("/"))
+		hist.GetXaxis().SetTitle(new_xtitle)
+	if ytitle != "-":
+		new_ytitle = " ".join(ytitle.split("/"))
+		hist.GetYaxis().SetTitle(new_ytitle)
+	if xlow != "-" and xhigh != "-":
+		new_xlow = float(xlow)
+		new_xhigh = float(xhigh)
+		hist.GetXaxis().SetRangeUser(new_xlow, new_xhigh);
+	if ylow != "-" and yhigh != "-":
+		new_ylow = float(ylow)
+		new_yhigh = float(yhigh)
+		hist.GetYaxis().SetRangeUser(new_ylow, new_yhigh);
+	if logOption != "-":
+		new_logOption = bool(int(logOption))
+		if new_logOption:
+			c.SetLogy( True )
+
+	if draw_option == "-":
 		hist.Draw()
 	else:
-		hist.Draw(option)
+		hist.Draw(draw_option)
 	hist.GetYaxis().SetTitleOffset(1.52);
+
 
 	# do all the fancy formatting 
 	ROOT.gStyle.SetOptStat(0);
@@ -48,7 +81,10 @@ def print_nice_hist(hist, plotpath,hist_name, option=""):
 	latex.DrawLatex(0.89,0.91,lumistuff)
 
 	#legend_SJ.Draw()
-	c.SaveAs("%s/%s.png"%(plotpath,hist_name))
+	if syst_str != "":
+		c.SaveAs("%s/%s_%s_%s_%s.png"%(output_dir,hist_name,sample_str,syst_str,year_str))
+	else:
+		c.SaveAs("%s/%s_%s_%s.png"%(output_dir,hist_name,sample_str,year_str))
 
 	"""
 	this is here if I ever want to modify this to return a histogram
