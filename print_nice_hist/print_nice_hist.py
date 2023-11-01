@@ -25,9 +25,11 @@ def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-",
 	if xtitle != "-":
 		new_xtitle = " ".join(xtitle.split("/"))
 		hist.GetXaxis().SetTitle(new_xtitle)
+
 	if ytitle != "-":
 		new_ytitle = " ".join(ytitle.split("/"))
 		hist.GetYaxis().SetTitle(new_ytitle)
+
 	if xlow != "-" and xhigh != "-":
 		new_xlow = float(xlow)
 		new_xhigh = float(xhigh)
