@@ -14,7 +14,8 @@ from get_file_info import get_file_info
 ##############################################################################################################
 
 def make_hist(file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-",xlow="-",xhigh="-",ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-",canvasy = "-"):
-	output_path = output_dir+"/"+hist_name
+	folder_name = hist_name
+	output_path = output_dir+"/"+folder_name
 	if not os.path.exists(output_path):
 		os.makedirs(output_path)
 
