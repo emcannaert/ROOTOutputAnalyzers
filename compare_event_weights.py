@@ -9,7 +9,7 @@ from get_file_info import get_file_info
 
 def main():
 	plot_home = "/home/ethan/Documents/plots/scratch_plots"
-	file_name = "/home/ethan/Documents/rootFiles/processedRootFiles/QCDMC2000toInf_2018_nom_processed.root"
+	file_name = "/home/ethan/Documents/rootFiles/processedRootFiles/QCDMC2000toInf_2018_nom_processed.root"   #QCDMC2000toInf_   TTToHadronic_
 	root_file = ROOT.TFile.Open(file_name,"READ")
 	c = ROOT.TCanvas("c", "canvas", 1200, 1000)
 	year_str,sample_str,syst_str = get_file_info.get_file_info(file_name)
@@ -18,6 +18,11 @@ def main():
 	btag_up_hist = root_file.Get(nom_+"/"+"h_bTag_eventWeight_up") 
 	btag_down_hist = root_file.Get(nom_+"/"+"h_bTag_eventWeight_down") 
 	btag_nom_hist = root_file.Get(nom_+"/"+"h_bTag_eventWeight_nom") 
+
+
+	btag_up_hist.GetXaxis().SetRangeUser(0.4, 1.6);
+	btag_down_hist.GetXaxis().SetRangeUser(0.4, 1.6);
+	btag_nom_hist.GetXaxis().SetRangeUser(0.4, 1.6);
 
 	btag_up_hist.SetLineColor(ROOT.kRed)
 	btag_down_hist.SetLineColor(ROOT.kBlue)
@@ -28,11 +33,14 @@ def main():
 	btag_nom_hist.SetLineWidth(3)
 	
 	btag_up_hist.SetTitle("%a b-tagging Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+	btag_down_hist.SetTitle("%a b-tagging Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+	btag_nom_hist.SetTitle("%a b-tagging Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+
 	btag_up_hist.GetYaxis().SetTitleOffset(1.58);
 	btag_up_hist.GetXaxis().SetTitle("avg superjet mass [GeV]");
 	btag_up_hist.Draw("HIST")
-	btag_down_hist.Draw("SAME")
 	btag_nom_hist.Draw("SAME")
+	btag_down_hist.Draw("SAME")
 
 	legend_SJ = ROOT.TLegend(0.6,0.65,0.85,0.8);
 	legend_SJ.SetHeader("Systematic","C")
@@ -88,7 +96,10 @@ def main():
 	PU_down_hist.SetLineWidth(3)
 	PU_nom_hist.SetLineWidth(3)
 	
-	PU_down_hist.SetTitle("%a b-tagging Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+	PU_down_hist.SetTitle("%a PU Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+	PU_up_hist.SetTitle("%a PU Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+	PU_nom_hist.SetTitle("%a PU Event weight for different SF uncertainty levels (%s)"%(sample_str,year_str ))
+
 	PU_down_hist.GetYaxis().SetTitleOffset(1.58);
 	PU_down_hist.GetXaxis().SetTitle("avg superjet mass [GeV]");
 	PU_down_hist.Draw("HIST")

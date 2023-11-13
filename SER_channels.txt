@@ -1,4 +1,0 @@
-b1 b2 b3
-c1 c2 c3
-col1 col2 col3
-d1 d2 d3

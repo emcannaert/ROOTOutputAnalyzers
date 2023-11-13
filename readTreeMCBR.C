@@ -137,13 +137,14 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
 
 
       ////////////////// event weight stuff ///////////////////////////
-      TH1F* h_bTag_eventWeight_up  = new TH1F( "h_bTag_eventWeight_up",("b-tagging event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
-      TH1F* h_bTag_eventWeight_nom  = new TH1F( "h_bTag_eventWeight_nom",("b-tagging event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
-      TH1F* h_bTag_eventWeight_down  = new TH1F( "h_bTag_eventWeight_down",("b-tagging event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_bTag_eventWeight_up  = new TH1F( "h_bTag_eventWeight_up",("b-tagging event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
+      TH1F* h_bTag_eventWeight_nom  = new TH1F( "h_bTag_eventWeight_nom",("b-tagging event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
+      TH1F* h_bTag_eventWeight_down  = new TH1F( "h_bTag_eventWeight_down",("b-tagging event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
 
-      TH1F* h_PU_eventWeight_up  = new TH1F( "h_PU_eventWeight_up",("Pileup event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
-      TH1F* h_PU_eventWeight_nom  = new TH1F( "h_PU_eventWeight_nom",("Pileup event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
-      TH1F* h_PU_eventWeight_down  = new TH1F( "h_PU_eventWeight_down",("Pileup event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),50,0.,2.0);
+      TH1F* h_PU_eventWeight_up  = new TH1F( "h_PU_eventWeight_up",("Pileup event weight (+1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
+      TH1F* h_PU_eventWeight_nom  = new TH1F( "h_PU_eventWeight_nom",("Pileup event weight (nominal) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
+      TH1F* h_PU_eventWeight_down  = new TH1F( "h_PU_eventWeight_down",("Pileup event weight (-1 sigma) ("+ dataYear+");Scale Factor Value; Events").c_str(),80,0.,2.0);
+
 
       /////////////more for verifying the CR //////////////////////////////////////
       TH1F* h_AK8_jet_mass_SR  = new TH1F("h_AK8_jet_mass_SR","AK8 Jet Mass (SR region);Mass [GeV]; Events / 30 5GeV",50,0.,1500);
@@ -485,7 +486,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
             }
             h_totHT_SR->Fill(totHT,eventWeightToUse);
 
-            h_disuperjet_mass_SR->Fill(diSuperJet_mass,eventWeightToUse);
+            
             //if (eventTTbarCRFlag == 0)   /////// full signal region
             //{
                //double tagging CUT BASED
@@ -493,6 +494,7 @@ void doThings(std::string inFileName, std::string outFileName, double& nEvents, 
                {
                   if((SJ_nAK4_300[1]>=2) && (SJ_mass_100[1]>=400.)   )
                   {
+                     h_disuperjet_mass_SR->Fill(diSuperJet_mass,eventWeightToUse);
                      h_SJ_mass_SR->Fill( (superJet_mass[0]+superJet_mass[1])/2.  );
                      nDoubleTagged+= eventScaleFactor;
                      //h_MSJ_mass_vs_MdSJ_doubleTag->Fill( diSuperJet_mass, (superJet_mass[1]+superJet_mass[0]   )/2.  ,eventWeightToUse );
@@ -588,9 +590,9 @@ void readTreeMCBR()
          for(auto systematic = systematics.begin(); systematic < systematics.end();systematic++ )
          {
 
-            double eventScaleFactors[4][4] = {  {1.0,1.0,1.0}, {1.0,1.0,1.0}, {1.0,1.0,1.0},{1.0,1.0,1.0}   }; //TODO  +   
+            double eventScaleFactors[4][4] = {  {1.0,1.0,1.0}, {1.0,1.0,1.0}, {1.0,1.0,1.0},{1.0,1.0,1.0}   }; //TODO  +    TTToHadronic_     QCDMC2000toInf_
 
-            std::vector<std::string> inFileNames = {  "/home/ethan/Documents/rootFiles/skimmedRootFiles/QCDMC2000toInf_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root"
+            std::vector<std::string> inFileNames = {  "/home/ethan/Documents/rootFiles/skimmedRootFiles/TTToHadronic_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root"
 
  
                                                    /*       TESTING
@@ -599,7 +601,7 @@ void readTreeMCBR()
                                                      ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC_HT2000toInf_" + *dataYear "_"+ systematic_str+"_SKIMMED.root").c_str(),
                                                      ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/TTTohadronic_" + *dataYear "_"+ systematic_str+"_SKIMMED.root").c_str() */
                                                   };
-            std::vector<std::string> outFileNames = {  "/home/ethan/Documents/rootFiles/processedRootFiles/QCDMC2000toInf_"+ *dataYear+ "_" + *systematic + "_processed.root"
+            std::vector<std::string> outFileNames = {  "/home/ethan/Documents/rootFiles/processedRootFiles/TTToHadronic_"+ *dataYear+ "_" + *systematic + "_processed.root"
                                                       /*       TESTING
                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *dataYear "_"+ systematic_str+"_processed.root").c_str(),
                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *dataYear "_"+ systematic_str+"_processed.root").c_str(),
