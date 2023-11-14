@@ -7,7 +7,7 @@ from get_file_info import get_file_info
 
 # takes in a ROOT histogram, plot output path, name you want the plot png to be called, and drawing options and prints the histogram with nice formatting
 
-def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-", xlow="-",xhigh="-", ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-", canvasy = "-"):
+def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-", xlow="-",xhigh="-", ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-", canvasy = "-", year="-",systematic="-",sample="-", region="-"):
 	c = None
 	if canvasy != "-" and canvasx != "-":
 
@@ -16,12 +16,29 @@ def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-",
 		c = ROOT.TCanvas("c", "canvas", 1200, 1000)
 
 	year_str,sample_str,syst_str = get_file_info.get_file_info(hist_file_path)
+	region_str = ""
+	if region!="-":
+		region_str= region
+	if year!='-':
+		year_str = year
+	if systematic!='-':
+		syst_str = systematic
+	if sample!="-":
+		sample_str = sample
 	if hist_title != "-":
+		strs = [sample_str,region, syst_str,year_str]
 		new_title = " ".join(hist_title.split("/"))
-		if syst_str != "":
-			hist.SetTitle("%s (%s) (%s) (%s)"%(new_title, sample_str, syst_str, year_str ))
-		else:
-			hist.SetTitle("%s (%s) (%s)"%(new_title, sample_str, year_str ))
+		for str_ in strs:
+			if str_ != "":
+				if str_ == "2015":
+					new_title += " (2016preAPV)"
+				elif str_ == "2016":
+					new_title += " (2016postAPV)"
+				else:
+					new_title += " (%s)"%str_
+
+		hist.SetTitle(new_title)
+
 	if xtitle != "-":
 		new_xtitle = " ".join(xtitle.split("/"))
 		hist.GetXaxis().SetTitle(new_xtitle)
@@ -83,10 +100,13 @@ def print_nice_hist(hist, hist_file_path, hist_name,hist_title="-",xtitle = "-",
 	latex.DrawLatex(0.89,0.91,lumistuff)
 
 	#legend_SJ.Draw()
-	if syst_str != "":
-		c.SaveAs("%s/%s_%s_%s_%s.png"%(output_dir,hist_name,sample_str,syst_str,year_str))
-	else:
-		c.SaveAs("%s/%s_%s_%s.png"%(output_dir,hist_name,sample_str,year_str))
+	plot_name = hist_name
+	strs = [sample_str,region, syst_str,year_str]
+	for str_ in strs:
+		if str_ != "":
+			plot_name += "_%s"%str_
+	c.SaveAs("%s/%s.png"%(output_dir,plot_name))
+
 
 	"""
 	this is here if I ever want to modify this to return a histogram

@@ -30,7 +30,8 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
   double QCD_1500to2000_SF[4] = {0.2119142341,0.195224041,0.3197450474,0.4947703875}; //TODO
   double QCD_2000toInf_SF[4] = {0.08568186031,0.07572795371,0.14306915,0.2132134533}; //TODO
   double TTToHadronic_SF[4] = {0.075592,0.05808655696,0.06651018525,0.06588049107}; //TODO
-
+  double TTToSemiLeptonic_SF[4] = {0.05395328118,0.05808655696,0.04264829286,0.04563489275}; //TODO
+  double TTToLeptonic_SF[4] = {0.0459517611,0.03401684391,0.03431532926,00.03617828025}; //TODO
 
   TCanvas *c1 = new TCanvas("c1","",400,20, 1800,1600);
 
@@ -48,7 +49,10 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
     TFile *f1000to1500 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *year +"_processed.root").c_str());
     TFile *f1500to2000 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *year +"_processed.root").c_str());
     TFile *f2000toInf  = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_" + *year +"_processed.root").c_str());
-    TFile *fTTbar      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToHadronic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTToSemiLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToSemiLeptonic_" + *year +"_processed.root").c_str());
+    TFile *fTToLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToLeptonic_" + *year +"_processed.root").c_str());
+
 
     std::string _outFname = "/Users/ethan/Documents/rootFiles/statisticalUncertaintyStudyAlt/allBR_expectedCounts_SR_" + *year +  ".root";
     const char * outFname = _outFname.c_str();
@@ -58,19 +62,25 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
     TH2F *h_MSJ_mass_vs_MdSJ_SR_1000to1500=  (TH2F*)f1000to1500->Get("h_MSJ_mass_vs_MdSJ_SR");
     TH2F *h_MSJ_mass_vs_MdSJ_SR_1500to2000=  (TH2F*)f1500to2000->Get("h_MSJ_mass_vs_MdSJ_SR");
     TH2F *h_MSJ_mass_vs_MdSJ_SR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_SR");
-    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToHadronic     =  (TH2F*)fTTToHadronic->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic     =  (TH2F*)fTToSemiLeptonic->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic     =  (TH2F*)fTToLeptonic->Get("h_MSJ_mass_vs_MdSJ_SR");
 
     h_MSJ_mass_vs_MdSJ_SR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
-    h_MSJ_mass_vs_MdSJ_SR_TTbar->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToHadronic->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic->Scale(TTToSemiLeptonic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic->Scale(TTToLeptonic_SF[yearCount]);
 
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_SR_1000to1500);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_1500to2000);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_2000toInf);
-    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTbar);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToHadronic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic);
 
     h_allBR->SetTitle( ("Total Expected Background Counts (QCD+TTbar MC) in the Signal Region for "+ *year +  "; diSuperjet Mass (GeV); avg superjet Mass (GeV)").c_str()    );
     h_allBR->GetXaxis()->SetTitleSize(0.025);
@@ -80,59 +90,6 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
     h_allBR->GetXaxis()->SetTitleOffset(1.30);
      gStyle->SetOptStat(0);
 
-/*
-
-    TLatex latex;
-    latex.SetTextSize(0.025);
-    latex.SetTextAlign(22);  //align at top
-
-
-    TText T; T.SetTextFont(30); T.SetTextAlign(22);
-    gStyle->SetOptStat(0);
-
-    gPad->Update();
-    TPaletteAxis *palette = (TPaletteAxis*)h_allBR->GetListOfFunctions()->FindObject("palette");
-
-
-    TText *CMSLabel = new TText();
-    CMSLabel-> SetNDC();
-    CMSLabel -> SetTextFont(1);
-    CMSLabel -> SetTextColor(1);
-    CMSLabel -> SetTextSize(0.0385);
-    CMSLabel -> SetTextAlign(22);
-    CMSLabel -> SetTextAngle(0);
-    CMSLabel -> DrawText(0.165, 0.895, "CMS");
-    CMSLabel->Draw();
-
-    TText *simLabel = new TText();
-    simLabel-> SetNDC();
-    simLabel -> SetTextFont(52);
-    simLabel -> SetTextColor(1);
-    simLabel -> SetTextSize(0.024);
-    simLabel -> SetTextAlign(22);
-    simLabel -> SetTextAngle(0);
-    simLabel -> DrawText(0.230, 0.86, "Simulation Preliminary");
-    simLabel->Draw();
-
-    TText *fullLumi = new TText();
-    fullLumi-> SetNDC();
-    fullLumi -> SetTextFont(52);
-    fullLumi -> SetTextColor(1);
-    fullLumi -> SetTextSize(0.024);
-    fullLumi -> SetTextAlign(22);
-    fullLumi -> SetTextAngle(0);
-    fullLumi -> DrawText(0.230, 0.86, "59.8 fb^{-1}");
-    fullLumi->Draw();
-
-    TString lumistuff =  "(13 TeV)";
-    latex.SetNDC();
-    latex.SetTextAngle(0);
-    latex.SetTextColor(kBlack);    
-    latex.SetTextFont(42);
-    latex.SetTextAlign(31); 
-    latex.SetTextSize(0.030);    
-    latex.DrawLatex(0.82,0.89,lumistuff);
-    */
     c1->SetLogz(0);
 
     h_allBR->Draw("colz");
@@ -149,7 +106,7 @@ void makeAllNiceSJvsdiSJ_mass_plots_SR_sameDatasets()
     f1000to1500->Close();
     f1500to2000->Close();
     f2000toInf->Close();
-    fTTbar->Close();
+    fTTToHadronic->Close();
     outFile.Close();
   }
 
@@ -161,11 +118,13 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
   double QCD_1500to2000_SF[4] = {0.6117279713, 0.5735971136,  0.5913499516,  0.6042726685}; //TODO
   double QCD_2000toInf_SF[4] = {0.2321972138,  0.226816329, 0.2216934265,  0.2446761137}; //TODO
   double TTToHadronic_SF[4] = {0.075592, 0.05808655696, 0.06651018525, 0.06588049107}; //TODO
+  double TTToSemiLeptonic_SF[4] = {0.05395328118,0.05808655696,0.04264829286,0.04563489275}; //TODO
+  double TTToLeptonic_SF[4] = {0.0459517611,0.03401684391,0.03431532926,00.03617828025}; //TODO
 
   TCanvas *c1 = new TCanvas("c1","",400,20, 1800,1600);
 
   std::vector<std::string> years = {"2015","2016","2017","2018"};
-
+  std::vector<std::string> dataFileNames;
   int yearCount = 0;                               
   for(auto year = years.begin(); year< years.end(); year++)
   {
@@ -174,11 +133,41 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
     c1->SetLeftMargin(0.1);
     c1->SetTopMargin(0.08);
         
+    // need to 
+    if (*year == "2015")
+    {
+      dataFileNames = {"JetHT_dataB-ver2_","JetHT_dataC-HIPM_","JetHT_dataD-HIPM_","JetHT_dataE-HIPM_","JetHT_dataF-HIPM_"};
+    }
+    else if (*year == "2016")
+    {
+      dataFileNames = {"JetHT_dataF_", "JetHT_dataG_", "JetHT_dataH_"};
+    }
+    else if (*year == "2017")
+    {
+      dataFileNames = {"JetHT_dataB_","JetHT_dataC_","JetHT_dataD_","JetHT_dataE_", "JetHT_dataF_"};
+    }
+    else if (*year == "2018")
+    {
+      dataFileNames = {"JetHT_dataA_","JetHT_dataB_","JetHT_dataC_","JetHT_dataD_"};
+    }
+
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_data = new TH2F("h_MSJ_mass_vs_MdSJ_SR","Double Tagged Superjet mass vs diSuperjet mass (Signal Region); diSuperjet mass [GeV];superjet mass", 22,1250., 9500, 20, 500, 3500);  /// 375 * 125
+    
+    for(auto dataFile = dataFileNames.begin();dataFile < dataFileNames.end();dataFile++)
+    {
+       TFile *fData = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/JetHT_"+ *dataFile+ "_" + *year +"_processed.root").c_str());
+      h_MSJ_mass_vs_MdSJ_SR_data->add();
+
+
+    }
+
 
     TFile *f1000to1500 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *year +"_processed.root").c_str());
     TFile *f1500to2000 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *year +"_processed.root").c_str());
     TFile *f2000toInf  = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_" + *year +"_processed.root").c_str());
-    TFile *fTTbar      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToHadronic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToSemiLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToSemiLeptonic_" + *year +"_processed.root").c_str());
+    TFile *fTTToLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToLeptonic_" + *year +"_processed.root").c_str());
 
     std::string _outFname = "/Users/ethan/Documents/rootFiles/statisticalUncertaintyStudyAlt/allBR_expectedCounts_CR_" + *year +  ".root";
     const char * outFname = _outFname.c_str();
@@ -189,20 +178,26 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
 
     TH2F *h_MSJ_mass_vs_MdSJ_CR_1500to2000=  (TH2F*)f1500to2000->Get("h_MSJ_mass_vs_MdSJ_CR");
     TH2F *h_MSJ_mass_vs_MdSJ_CR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_CR");
-    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToHadronic     =  (TH2F*)fTTToHadronic->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic     =  (TH2F*)fTTToSemiLeptonic->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic     =  (TH2F*)fTTToLeptonic->Get("h_MSJ_mass_vs_MdSJ_CR");
 
 
     h_MSJ_mass_vs_MdSJ_CR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
-    h_MSJ_mass_vs_MdSJ_CR_TTbar->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToHadronic->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic->Scale(TTToSemiLeptonic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic->Scale(TTToLeptonic_SF[yearCount]);
 
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_CR_1000to1500);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_1500to2000);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_2000toInf);
-    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTbar);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToHadronic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic);
 
     h_allBR->SetTitle( ("Total Expected Background Counts (QCD+TTbar MC) in the Control Region for "+ *year +  "; diSuperjet Mass (GeV); avg superjet Mass (GeV)").c_str()    );
     h_allBR->GetXaxis()->SetTitleSize(0.025);
@@ -212,59 +207,6 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
     h_allBR->GetXaxis()->SetTitleOffset(1.30);
      gStyle->SetOptStat(0);
 
-/*
-
-    TLatex latex;
-    latex.SetTextSize(0.025);
-    latex.SetTextAlign(22);  //align at top
-
-
-    TText T; T.SetTextFont(30); T.SetTextAlign(22);
-    gStyle->SetOptStat(0);
-
-    gPad->Update();
-    TPaletteAxis *palette = (TPaletteAxis*)h_allBR->GetListOfFunctions()->FindObject("palette");
-
-
-    TText *CMSLabel = new TText();
-    CMSLabel-> SetNDC();
-    CMSLabel -> SetTextFont(1);
-    CMSLabel -> SetTextColor(1);
-    CMSLabel -> SetTextSize(0.0385);
-    CMSLabel -> SetTextAlign(22);
-    CMSLabel -> SetTextAngle(0);
-    CMSLabel -> DrawText(0.165, 0.895, "CMS");
-    CMSLabel->Draw();
-
-    TText *simLabel = new TText();
-    simLabel-> SetNDC();
-    simLabel -> SetTextFont(52);
-    simLabel -> SetTextColor(1);
-    simLabel -> SetTextSize(0.024);
-    simLabel -> SetTextAlign(22);
-    simLabel -> SetTextAngle(0);
-    simLabel -> DrawText(0.230, 0.86, "Simulation Preliminary");
-    simLabel->Draw();
-
-    TText *fullLumi = new TText();
-    fullLumi-> SetNDC();
-    fullLumi -> SetTextFont(52);
-    fullLumi -> SetTextColor(1);
-    fullLumi -> SetTextSize(0.024);
-    fullLumi -> SetTextAlign(22);
-    fullLumi -> SetTextAngle(0);
-    fullLumi -> DrawText(0.230, 0.86, "59.8 fb^{-1}");
-    fullLumi->Draw();
-
-    TString lumistuff =  "(13 TeV)";
-    latex.SetNDC();
-    latex.SetTextAngle(0);
-    latex.SetTextColor(kBlack);    
-    latex.SetTextFont(42);
-    latex.SetTextAlign(31); 
-    latex.SetTextSize(0.030);    
-    latex.DrawLatex(0.82,0.89,lumistuff);
-    */
     c1->SetLogz(0);
 
     h_allBR->Draw("colz");
@@ -281,7 +223,7 @@ void makeAllNiceSJvsdiSJ_mass_plots_CR_sameDatasets()
     f1000to1500->Close();
     f1500to2000->Close();
     f2000toInf->Close();
-    fTTbar->Close();
+    fTTToHadronic->Close();
     outFile.Close();
 
   }
@@ -295,6 +237,8 @@ void make_statUncertainty_mass_plots_SR_sameDatasets()
   double QCD_1500to2000_SF[4] = {0.6117279713, 0.5735971136,  0.5913499516,  0.6042726685}; //TODO
   double QCD_2000toInf_SF[4] = {0.2321972138,  0.226816329, 0.2216934265,  0.2446761137}; //TODO
   double TTToHadronic_SF[4] = {0.075592, 0.05808655696, 0.06651018525, 0.06588049107}; //TODO
+  double TTToSemiLeptonic_SF[4] = {0.05395328118,0.05808655696,0.04264829286,0.04563489275}; //TODO
+  double TTToLeptonic_SF[4] = {0.0459517611,0.03401684391,0.03431532926,00.03617828025}; //TODO
 
   TCanvas *c1 = new TCanvas("c1","",400,20, 1800,1600);
 
@@ -313,26 +257,34 @@ void make_statUncertainty_mass_plots_SR_sameDatasets()
     TFile *f1000to1500 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *year +"_processed.root").c_str());
     TFile *f1500to2000 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *year +"_processed.root").c_str());
     TFile *f2000toInf  = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_" + *year +"_processed.root").c_str());
-    TFile *fTTbar      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToHadronic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToSemiLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToSemiLeptonic_" + *year +"_processed.root").c_str());
+    TFile *fTTToLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToLeptonic_" + *year +"_processed.root").c_str());
 
     TH2F *h_MSJ_mass_vs_MdSJ_SR_1000to1500=  (TH2F*)f1000to1500->Get("h_MSJ_mass_vs_MdSJ_SR");
 
     TH2F *h_MSJ_mass_vs_MdSJ_SR_1500to2000=  (TH2F*)f1500to2000->Get("h_MSJ_mass_vs_MdSJ_SR");
     TH2F *h_MSJ_mass_vs_MdSJ_SR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_SR");
-    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToHadronic     =  (TH2F*)fTTToHadronic->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic     =  (TH2F*)fTTToSemiLeptonic->Get("h_MSJ_mass_vs_MdSJ_SR");
+    TH2F *h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic     =  (TH2F*)fTTToLeptonic->Get("h_MSJ_mass_vs_MdSJ_SR");
 
 
     h_MSJ_mass_vs_MdSJ_SR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_SR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
-    h_MSJ_mass_vs_MdSJ_SR_TTbar->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToHadronic->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic->Scale(TTToSemiLeptonic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic->Scale(TTToLeptonic_SF[yearCount]);
 
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_SR_1000to1500);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_1500to2000);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_2000toInf);
-    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTbar);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToHadronic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToSemiLeptonic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_SR_TTToLeptonic);
 
 
 
@@ -367,7 +319,7 @@ void make_statUncertainty_mass_plots_SR_sameDatasets()
     f1000to1500->Close();
     f1500to2000->Close();
     f2000toInf->Close();
-    fTTbar->Close();
+    fTTToHadronic->Close();
 
   }
 
@@ -379,6 +331,8 @@ void make_statUncertainty_mass_plots_CR_sameDatasets()
   double QCD_1500to2000_SF[4] = {0.6117279713, 0.5735971136,  0.5913499516,  0.6042726685};
   double QCD_2000toInf_SF[4] = {0.2321972138,  0.226816329, 0.2216934265,  0.2446761137};
   double TTToHadronic_SF[4] = {0.075592, 0.05808655696, 0.06651018525, 0.06588049107};
+  double TTToSemiLeptonic_SF[4] = {0.05395328118,0.05808655696,0.04264829286,0.04563489275}; //TODO
+  double TTToLeptonic_SF[4] = {0.0459517611,0.03401684391,0.03431532926,00.03617828025}; //TODO
 
   TCanvas *c1 = new TCanvas("c1","",400,20, 1800,1600);
 
@@ -397,27 +351,35 @@ void make_statUncertainty_mass_plots_CR_sameDatasets()
     TFile *f1000to1500 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_" + *year +"_processed.root").c_str());
     TFile *f1500to2000 = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_" + *year +"_processed.root").c_str());
     TFile *f2000toInf  = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_" + *year +"_processed.root").c_str());
-    TFile *fTTbar      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToHadronic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_" + *year +"_processed.root").c_str());
+    TFile *fTTToSemiLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToSemiLeptonic_" + *year +"_processed.root").c_str());
+    TFile *fTTToLeptonic      = new TFile(("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTToLeptonic_" + *year +"_processed.root").c_str());
 
     TH2F *h_MSJ_mass_vs_MdSJ_CR_1000to1500=  (TH2F*)f1000to1500->Get("h_MSJ_mass_vs_MdSJ_CR");
 
     TH2F *h_MSJ_mass_vs_MdSJ_CR_1500to2000=  (TH2F*)f1500to2000->Get("h_MSJ_mass_vs_MdSJ_CR");
     TH2F *h_MSJ_mass_vs_MdSJ_CR_2000toInf =  (TH2F*)f2000toInf->Get("h_MSJ_mass_vs_MdSJ_CR");
-    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTbar     =  (TH2F*)fTTbar->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToHadronic     =  (TH2F*)fTTToHadronic->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic     =  (TH2F*)fTTToSemiLeptonic->Get("h_MSJ_mass_vs_MdSJ_CR");
+    TH2F *h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic     =  (TH2F*)fTTToLeptonic->Get("h_MSJ_mass_vs_MdSJ_CR");
 
 
 
     h_MSJ_mass_vs_MdSJ_CR_1000to1500->Scale(QCD_1000to1500_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_1500to2000->Scale(QCD_1500to2000_SF[yearCount]);
     h_MSJ_mass_vs_MdSJ_CR_2000toInf->Scale(QCD_2000toInf_SF[yearCount]);
-    h_MSJ_mass_vs_MdSJ_CR_TTbar->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToHadronic->Scale(TTToHadronic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic->Scale(TTToSemiLeptonic_SF[yearCount]);
+    h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic->Scale(TTToLeptonic_SF[yearCount]);
 
 
 
     TH2F *h_allBR = new TH2F(*h_MSJ_mass_vs_MdSJ_CR_1000to1500);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_1500to2000);
     h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_2000toInf);
-    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTbar);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToHadronic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToSemiLeptonic);
+    h_allBR->Add(h_MSJ_mass_vs_MdSJ_CR_TTToLeptonic);
 
 
 
@@ -452,7 +414,9 @@ void make_statUncertainty_mass_plots_CR_sameDatasets()
     f1000to1500->Close();
     f1500to2000->Close();
     f2000toInf->Close();
-    fTTbar->Close();
+    fTTToHadronic->Close();
+    fTTToSemiLeptonic->Close();
+    fTTToLeptonic->Close();
 
   }
 

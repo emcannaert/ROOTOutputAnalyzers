@@ -509,31 +509,55 @@ void readTreeMCBR()
 {
    bool includeTTBar = true;
    bool allHTBins    = true;
-
+   bool runData      = false;
    std::vector<std::string> dataYears = {"2015","2016","2017","2018"};
-   std::vector<std::string> systematics = {"JER","nom"};  //TESTING
+   std::vector<std::string> systematics = {"nom","JEC","JER"};  //TESTING
+
+
    if(includeTTBar && allHTBins)  /// make sure you are
    {
-      int yearNum = 0;
       for(auto dataYear = dataYears.begin(); dataYear < dataYears.end();dataYear++ )
       {
+
+
+
+         std::vector<std::string> dataBlocks; 
+         std::string skimmedFilePaths;
+
+         if(runData)
+         {
+            systematics = {"nom","JEC"};  //TESTING
+
+            if(*dataYear == "2015")
+            {
+               dataBlocks = {"JetHT_dataB-ver2_","JetHT_dataC-HIPM_","JetHT_dataD-HIPM_","JetHT_dataE-HIPM_","JetHT_dataF-HIPM_"}; // JetHT_dataB-ver1 not present
+            }
+            else if(*dataYear == "2016")
+            {
+               dataBlocks = {"JetHT_dataF_", "JetHT_dataG_", "JetHT_dataH_"};
+            }
+            else if(*dataYear == "2017")
+            {
+               dataBlocks = {"JetHT_dataB_","JetHT_dataC_","JetHT_dataD_","JetHT_dataE_", "JetHT_dataF_"};
+            }
+            else if(*dataYear == "2018")
+            {
+               dataBlocks = {"JetHT_dataA_","JetHT_dataB_","JetHT_dataC_","JetHT_dataD_"};
+            }
+         }
+
+         else
+         {  
+           //dataBlocks = {"TTToSemiLeptonic_"}; 
+           dataBlocks = {"QCDMC1000to1500_","QCDMC1500to2000_","QCDMC2000toInf_","TTToHadronic_", "TTToSemiLeptonic_", "TTToLeptonic_"};
+         }
+
+
          for(auto systematic = systematics.begin();systematic<systematics.end();systematic++)
          {
             double eventScaleFactor = 1; 
 
-            std::vector<std::string> inFileNames = {
-                                                    ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC1000to1500_" + *dataYear+ "_" + *systematic + "_SKIMMED.root").c_str(),
-                                                    ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC1500to2000_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root").c_str(),
-                                                     ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/QCDMC2000toInf_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root").c_str(),
-                                                     ("/Users/ethan/Documents/rootFiles/skimmedRootFilesAlt/TTTohadronic_"+ *dataYear+ "_" + *systematic + "_SKIMMED.root").c_str()
-                                                  };
-            std::vector<std::string> outFileNames = {
-                                                    ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1000to1500_"+ *dataYear+ "_" + *systematic + "_processed.root").c_str(),
-                                                    ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT1500to2000_"+ *dataYear+ "_" + *systematic + "_processed.root").c_str(),
-                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/QCDMC_HT2000toInf_"+ *dataYear+ "_" + *systematic + "_processed.root").c_str(),
-                                                     ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/TTTohadronic_"+ *dataYear+ "_" + *systematic + "_processed.root").c_str()
-                                                  };
-            for(unsigned int iii = 0; iii<inFileNames.size(); iii++)
+            for(auto dataBlock = dataBlocks.begin();dataBlock < dataBlocks.end();dataBlock++)
             {
 
                double nEvents = 0;
@@ -546,16 +570,24 @@ void readTreeMCBR()
                double nDoubleTaggedCR = 0;
                double NNDoubleTag = 0;
                double nDoubleTaggedCRNN = 0;
-               doThings(inFileNames[iii],outFileNames[iii],nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactor, *dataYear,*systematic );
+
+               std::string year = *dataYear;
+               std::string systematic_str = *systematic;
+
+               std::string inFileName = ("/Users/ethan/Documents/rootFiles/skimmedRootFiles/"+*dataBlock+year +  "_"+ systematic_str+ "_SKIMMED.root").c_str();
+               std::string outFileName = ("/Users/ethan/Documents/rootFiles/processedRootFiles/"+ *dataBlock+year +  "_"+ systematic_str+ "_processed.root").c_str();
+
+               doThings(inFileName,outFileName,nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactor, *dataYear,*systematic );
+               
                std::cout << "Total breadown: " << nEvents<< " events total, " <<nHTcut << " passed HT cut, " <<nAK8JetCut << " passsed nAK8 jet cut, " <<nHeavyAK8Cut << " passed heavy AK8 jet/ dijet cut, " << nBtagCut << " passed BJet cut, " << nDoubleTagged<< " double tagged." << std::endl;
                std::cout << "Events not passing b-tag requirement: " <<nNoBjets << " , number of events in Control region: " <<nDoubleTaggedCR << ", number of NN doubled-tagged events: "<< nDoubleTaggedCRNN << std::endl;
 
                std::cout << "number of events NN tagged: " << NNDoubleTag << std::endl;
+
+               std::cout << "Finished with "<< inFileName << "." << std::endl;
             }
 
-
-            std::cout << "Finished with "<< inFileNames.size() << " files." << std::endl;
-            yearNum++;
+            
          }
       }
    }

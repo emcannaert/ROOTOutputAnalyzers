@@ -1,7 +1,7 @@
 import sys,os,time
 import ROOT
 import ast
-
+from print_nice_hist import print_nice_hist
 ### linearize_final_plots.py
 ### written by Ethan Cannaert, October 2023
 ### requires locations of input root files for each background/signal contribution (QCD1000to1500, QCD1500to2000, QCD2000toInf, TTbar, sig MC)
@@ -17,6 +17,7 @@ import ast
 ### still have to adapt this to run for signal - a separate look would be done that runs over all signal files,years, and systematics, and makes 
 ### a root file with the linearized histograms 
 
+### update 10 Nov, will create a method that saves plots (and histograms) of the individual and combined 2D distributions in the SR and CR
 class linearized_plot:
 	n_bins_x = 22
 	n_bins_y = 20
@@ -49,6 +50,18 @@ class linearized_plot:
 			self.TTbar_hist_CR.extend(self.load_ttbar_hist("CR",systematic))
 			#self.data_hist_CR.extend(self.load_data_hists("CR",systematic))
 
+		self.write_2D_distribution(self.load_QCD_hists("SR","nom"), "Average Superjet Mass vs diSuperjet Mass", "QCD","SR")
+		self.write_2D_distribution(self.load_QCD_hists("CR","nom"),"Average Superjet Mass vs diSuperjet Mass","QCD","CR")
+		self.write_2D_distribution(self.load_ttbar_hist("SR","nom"), "Average Superjet Mass vs diSuperjet Mass","TTbar","SR")
+		self.write_2D_distribution(self.load_ttbar_hist("CR","nom"), "Average Superjet Mass vs diSuperjet Mass","TTbar","CR")
+
+		combined_hist_SR = self.load_ttbar_hist("SR","nom")[0]
+		combined_hist_SR.Add(self.load_QCD_hists("SR","nom")[0])
+		combined_hist_CR =  self.load_ttbar_hist("CR","nom")[0]
+		combined_hist_CR.Add(self.load_QCD_hists("CR","nom")[0])
+
+		self.write_2D_distribution([combined_hist_SR], "Average Superjet Mass vs diSuperjet Mass", "BR-Combined","SR")
+		self.write_2D_distribution([combined_hist_CR], "Average Superjet Mass vs diSuperjet Mass", "BR-Combined","CR")
 
 		#now create linear plots that have all systematic plots inside
 
@@ -137,8 +150,13 @@ class linearized_plot:
 		return all_combined_QCD_hist   # load in QCD histograms, scale them, add them together, and return their sum
 	def load_ttbar_hist(self,region,systematic):
 
-		SF_TTbar= {'2015':0.075592 , '2016':0.05808655696 , '2017':0.06651018525 , '2018': 0.06588049107 }
-		hist_path_TTbar = self.MC_root_file_home+ "TTTohadronic_%s_%s_processed.root"%(self.year,systematic)
+		SF_TTToHadronic= {'2015':0.075592 , '2016':0.05808655696 , '2017':0.06651018525 , '2018': 0.06588049107 }
+		SF_TTToSemiLeptonic= {'2015':0.05395328118 , '2016':0.04236184005 , '2017':0.04264829286 , '2018': 0.04563489275 }
+		SF_TTToLeptonic= {'2015':0.0459517611 , '2016':0.03401684391 , '2017':0.03431532926 , '2018': 0.03617828025 }
+
+		hist_path_TTToHadronic = self.MC_root_file_home+ "TTTohadronic_%s_%s_processed.root"%(self.year,systematic)
+		hist_path_TTToSemiLeptonic = self.MC_root_file_home+ "TTToSemiLeptonic_%s_%s_processed.root"%(self.year,systematic)
+		hist_path_TTToLeptonic = self.MC_root_file_home+ "TTToLeptonic_%s_%s_processed.root"%(self.year,systematic)
 
 		sys_suffix = [""]
 		if systematic != "nom":
@@ -150,12 +168,27 @@ class linearized_plot:
 		for sys_str in sys_updown:
 
 			hist_name_TTbar = "%s/h_MSJ_mass_vs_MdSJ_%s"%(sys_str,region )
-			TH2_file_TTbar = ROOT.TFile.Open(hist_path_TTbar,"READ")
-			TH2_hist_TTbar = TH2_file_TTbar.Get(hist_name_TTbar) 
+			TH2_file_TTToHadronic = ROOT.TFile.Open(hist_path_TTToHadronic,"READ")
+			TH2_file_TTToSemiLeptonic = ROOT.TFile.Open(hist_path_TTToSemiLeptonic,"READ")
+			TH2_file_TTToLeptonic = ROOT.TFile.Open(hist_path_TTToLeptonic,"READ")
 
-			TH2_hist_TTbar.Scale(SF_TTbar[self.year])
-			TH2_hist_TTbar.SetDirectory(0)   # histograms lose their references when the file destructor is called
-			all_combined_TTbar_hist.append(TH2_hist_TTbar)
+			TH2_hist_TTToHadronic = TH2_file_TTbar.Get(hist_name_TTbar) 
+			TH2_hist_TTToHadronic = TH2_file_TTToSemiLeptonic.Get(hist_name_TTbar) 
+			TH2_hist_TTToHadronic = TH2_file_TTToLeptonic.Get(hist_name_TTbar) 
+
+			TH2_hist_TTToHadronic.Scale(SF_TTToHadronic[self.year])
+			TH2_hist_TTToHadronic.SetDirectory(0)   # histograms lose their references when the file destructor is called
+
+			TH2_hist_TTToSemiLeptonic.Scale(SF_TTToSemiLeptonic[self.year])
+			TH2_hist_TTToSemiLeptonic.SetDirectory(0)   # histograms lose their references when the file destructor is called
+
+			TH2_hist_TTToLeptonic.Scale(SF_TTToLeptonic[self.year])
+			TH2_hist_TTToLeptonic.SetDirectory(0)   # histograms lose their references when the file destructor is called
+			
+			TH2_hist_TTToHadronic.add(TH2_hist_TTToLeptonic)
+			TH2_hist_TTToHadronic.add(TH2_hist_TTToSemiLeptonic)
+			TH2_hist_TTToHadronic.SetTitle("combined TTbar MC (%s) (%s) (%s)"%(self.year,region, systematic))
+			all_combined_TTbar_hist.append(TH2_hist_TTToHadronic)
 
 		return all_combined_TTbar_hist  # load in TTbar historam, scale it, and return this version
 
@@ -281,6 +314,17 @@ class linearized_plot:
 
 				#self.data_linear_SR[iii+jjj].Draw()
 				#c.SaveAs(self.final_plot_home+"/data_linear_%s_%s_SR.png"%(self.year,sys_str))
+
+		return
+	def write_2D_distribution(self,hist, title, sample, region):   #TODO: add signal and data olots here 
+		c = ROOT.TCanvas("c", "canvas", 1000, 1050)
+
+		print("The hist is ", hist)
+		outputPath = "/Users/ethan/Documents/plots/randomPlots/2D-Distribution-Plots"
+		hist=hist[0]
+		print_nice_hist.print_nice_hist(hist= hist, hist_file_path = "" , output_dir=outputPath, hist_name = hist.GetName(), hist_title=title, draw_option="colz", year =self.year,systematic="",sample=sample, region=region,xtitle="diSuperjet Mass [GeV]", ytitle = "Avg Superjet Mass [GeV]")
+		
+		#c.SaveAs(self.final_plot_home+"/TTbar_linear_%s_%s_CR.png"%(self.year,sys_str))
 
 		return
 	def load_superbin_indices(self,region="SR"):    # load in the superbin indices (located in a text file )
