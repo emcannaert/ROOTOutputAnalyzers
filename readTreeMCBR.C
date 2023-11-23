@@ -574,8 +574,8 @@ void readTreeMCBR()
                std::string year = *dataYear;
                std::string systematic_str = *systematic;
 
-               std::string inFileName = ("/Users/ethan/Documents/rootFiles/skimmedRootFiles/"+*dataBlock+year +  "_"+ systematic_str+ "_SKIMMED.root").c_str();
-               std::string outFileName = ("/Users/ethan/Documents/rootFiles/processedRootFiles/"+ *dataBlock+year +  "_"+ systematic_str+ "_processed.root").c_str();
+               std::string inFileName = ("/Users/ethan/Documents/rootFiles/skimmedRootFiles/Alt"+*dataBlock+  year +  "_"+ systematic_str+ "_SKIMMED.root").c_str();
+               std::string outFileName = ("/Users/ethan/Documents/rootFiles/processedRootFilesAlt/"+ *dataBlock+year +  "_"+ systematic_str+ "_processed.root").c_str();
 
                doThings(inFileName,outFileName,nEvents,nHTcut,nAK8JetCut,nHeavyAK8Cut,nBtagCut,nDoubleTagged,nNoBjets,nDoubleTaggedCR, NNDoubleTag,nDoubleTaggedCRNN, eventScaleFactor, *dataYear,*systematic );
                
