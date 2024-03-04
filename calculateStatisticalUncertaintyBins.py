@@ -550,7 +550,8 @@ class combineHistBins:
 if __name__=="__main__":
 	print("Calculating bin groupings for best statistical uncertainties")
 	out_txt_file = open("/Users/ethan/Documents/rootFiles/statisticalUncertaintyStudyAlt/txtfiles/superbin_indices.txt","w")
-	years = {"2015","2016","2017","2018"}
+	#years = ["2015","2016","2017","2018"]
+	years = ["2018"]
 	regions = {"SR","CR"}
 	c = ROOT.TCanvas("c", "canvas", 1000, 1050)
 	for region in regions:

@@ -13,17 +13,22 @@ from get_file_info import get_file_info
 ## if you don't want to include an option, put a dash - instead
 ##############################################################################################################
 
-def make_hist(file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-",xlow="-",xhigh="-",ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-",canvasy = "-"):
+def print_inputs(file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-",xlow="-",xhigh="-",ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-",canvasy = "-", region="-", label_setting = "-", scale_bool = '-'):
+	print("file_path: %s,  hist_name: %s,  hist_title: %s,   xtitle: %s,   ytitle: %s,   xlow:   %s,   xhigh:  %s,    ylow:  %s,    yhigh: %s,    draw_option:  %s,    output_dir: %s,     logOption:  %s,    canvasx:  %s,     canvasy:  %s,     region:  %s,     label_setting:  %s,    scale_bool %s,  "%(file_path, hist_name,hist_title,xtitle, ytitle,xlow,xhigh,ylow, yhigh, draw_option, output_dir, logOption, canvasx,canvasy, region, label_setting, scale_bool ))
+	return
+def make_hist(file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-",xlow="-",xhigh="-",ylow = "-", yhigh = "-", draw_option="-", output_dir="-", logOption = "-", canvasx = "-",canvasy = "-", region="-", label_setting = "-", scale_bool = '-'):
+	print_inputs(file_path, hist_name,hist_title,xtitle, ytitle,xlow,xhigh,ylow, yhigh, draw_option, output_dir, logOption, canvasx,canvasy, region, label_setting, scale_bool )
 	folder_name = hist_name
-	output_path = output_dir+"/"+folder_name
+	output_path = output_dir   #+"/"+folder_name
 	if not os.path.exists(output_path):
 		os.makedirs(output_path)
 
 	ROOT.gStyle.SetOptStat(0)
 	root_file = ROOT.TFile.Open(file_path,"READ")
 
-	hist_ = None
+	year,sample,systematic = get_file_info.get_file_info(file_path)
 
+	hist_ = None
 	#root_file.Get(hist_name)
 	for key in root_file.GetListOfKeys():
 		folder = key.ReadObj()
@@ -41,7 +46,12 @@ def make_hist(file_path, hist_name,hist_title="-",xtitle = "-", ytitle = "-",xlo
 	if(hist_):
 		hist_.SetDirectory(0) 
 		ROOT.TH1.AddDirectory(False)
-		print_nice_hist.print_nice_hist(hist_, file_path, hist_name,hist_title,xtitle,ytitle, xlow,xhigh,ylow,yhigh,draw_option, output_path, logOption, canvasx, canvasy)
+
+		print_nice_hist.print_nice_hist(hist_, file_path, hist_name,hist_title,xtitle,ytitle, xlow,xhigh,ylow,yhigh,draw_option, output_path, logOption, canvasx, canvasy, year,systematic,sample, region, label_setting, scale_bool)
+
+		
+
+
 		print("Histogram successfully created at %s."%output_path)
 		return
 	else:

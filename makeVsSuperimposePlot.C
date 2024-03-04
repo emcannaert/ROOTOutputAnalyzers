@@ -8,10 +8,8 @@ using namespace std;
 void makeVsSuperimposePlot()
 {
 
-  TFile *f1 = new TFile("/home/ethan/Documents/clustAlg_Suu8TeV_chi3TeV_processed.root");
-  TFile *f2 = new TFile("/home/ethan/Documents/clustAlg_QCD2000toInf_processed.root");
+  TFile *f1 = new TFile("/Users/ethan/Documents/rootFiles/cutflowPlots/cutflow_plot_histograms_QCDMC2000toInf_2018.root");
   TCanvas *c1 = new TCanvas("c1","",400,20, 2000,2000);
-  //gPad->SetLogy();
   gStyle->SetOptStat(0);
 
   TGraph *h_MC_SJ_mass_versus =  (TGraph*)f1->Get("h_SJ_mass_versus");

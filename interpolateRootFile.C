@@ -1,15 +1,14 @@
 using std::cout, std::endl,std::string;
 void interpolateRootFile(){
-    // As usual, load the combine library to get access to the RooParametricHist
 
-    string input_root_path = "/Users/ethan/Documents/rootFiles/fInputRootalCombineFiles/";
+    string input_root_path = "/Users/ethan/Documents/rootFiles/cutflowPlots/cutflow_plot_histograms_QCDMC2000toInf_2018.root";
     string year = "2018";
     string region = "SR";
 
     
     // Output file and workspace
-    TFile *fInputRoot = new TFile((input_root_path+"combine_"+ year+ "_"+ region + ".root").c_str());
-    RooWorkspace wspace("wspace","wspace");
+   //TFile *fInputRoot = new TFile((input_root_path+"combine_"+ year+ "_"+ region + ".root").c_str());
+    //RooWorkspace wspace("wspace","wspace");
 
     // need to import CR and SR histograms
     TH1F *h_fInputRootal_combine_hist=  (TH1F*)fInputRoot->Get("QCD_SR/QCD");
